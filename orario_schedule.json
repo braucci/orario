@@ -1,13 +1,13 @@
 {
   "meta": {
-    "school": "ISTITUTO TECNICO INDUSTRIALE STATALE “ETTORE MAJORANA” — Somma Vesuviana",
+    "school": "ITIS “ETTORE MAJORANA” — Somma Vesuviana",
     "teacher": "Raucci Biagio",
     "showEmptyDays": [
       "MAR",
       "GIO",
       "MER"
     ],
-    "updatedISO": "2026-08-29T15:02:37.888Z"
+    "updatedISO": "2026-08-29T15:05:58.447Z"
   },
   "days": [
     "LUN",
