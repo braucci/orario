@@ -338,21 +338,62 @@ html[data-theme="dark"] .back{ background:rgba(3,6,12,.7); }
 
 /* ---------- Stampa: planning A4 orizzontale ---------- */
 @media print{
-  @page{ size:A4 landscape; margin:12mm; }
-  html, body{ background:#fff; color:#000; }
-  header, nav.tabs, .daybar, .now, .noprint, .legend{ display:none !important; }
-  main{ max-width:none; padding:0; }
+  /* Il planner deve stare in UNA sola A4 orizzontale, centrato nella pagina.
+     Geometria utile: 297-2x11 = 275 mm di larghezza, 210-2x10 = 190 mm di altezza.
+     Di questi, circa 14 mm vanno all'intestazione: alla tabella ne restano 172. */
+  @page{ size:A4 landscape; margin:10mm 11mm; }
+
+  html, body{
+    background:#fff; color:#000;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact;
+    font-size:10pt;
+  }
+  header, nav.tabs, .daybar, .now, .noprint, .legend, .toast, .back{ display:none !important; }
+  main{ max-width:none; padding:0; margin:0; }
   .panel{ border:0; box-shadow:none; background:none; }
   .panel h2{ display:none; }
   .pb{ padding:0; }
-  .weekwrap{ border:0; overflow:visible; }
-  table.week{ min-width:0; }
-  table.week th, table.week td{ border:.4pt solid #777 !important; }
-  table.week thead th, table.week td.hour{ background:#eee !important; color:#000 !important; position:static; box-shadow:none !important; }
-  .wcell{ background:none !important; border-left:2.5pt solid var(--c, #999) !important; min-height:52px; }
-  .wcell .c, .wcell .s, .wcell .r, .wcell .t{ color:#000 !important; }
+
+  /* Il blocco stampato occupa l'intera area utile e vi si centra. */
+  #viewWeek{
+    display:flex; flex-direction:column; justify-content:center;
+    min-height:190mm; page-break-inside:avoid;
+  }
+  .print-head{ display:block !important; text-align:center; margin:0 0 5mm; }
+  .print-head h1{ font-size:15pt; font-weight:700; letter-spacing:.02em; }
+  .print-head p{ font-size:9pt; color:#333; }
+
+  .weekwrap{ border:0; overflow:visible; background:none; }
+
+  /* table-layout:fixed impedisce alle note lunghe di dilatare una colonna;
+     l'altezza dichiarata fa ripartire le righe in parti uguali sul foglio. */
+  table.week{
+    min-width:0; width:100%; height:168mm; table-layout:fixed;
+    border:.5pt solid #444;
+  }
+  table.week th, table.week td{ border:.4pt solid #888 !important; vertical-align:top; }
+  table.week thead th{
+    position:static; background:#e8e8e8 !important; color:#000 !important;
+    font-size:8pt; letter-spacing:.08em; padding:1.6mm 1mm; box-shadow:none !important;
+    text-align:center; height:auto;
+  }
+  table.week td.hour, table.week thead th.hour{
+    position:static; background:#f0f0f0 !important; color:#000 !important;
+    width:15mm; min-width:0; padding:1.5mm .5mm; text-align:center;
+  }
+  table.week td.hour{ font-size:6.5pt; }
+  table.week td.hour b{ font-size:9pt; }
   td.tdcol.today{ background:none !important; }
-  .print-head{ display:block !important; margin-bottom:7mm; }
+
+  .wcell{
+    min-height:0; height:100%; padding:1.6mm 1.8mm; gap:.6mm;
+    background:none !important;
+    border-left:2.2pt solid var(--c, #bbb) !important;
+  }
+  .wcell .c{ font-size:9.5pt; font-weight:800; color:#000 !important; }
+  .wcell .s{ font-size:7.5pt; color:#222 !important; line-height:1.15; }
+  .wcell .r{ font-size:7pt; color:#444 !important; line-height:1.15; }
+  .wcell .t{ font-size:6.5pt; color:#555 !important; margin-top:auto; padding-top:1mm; }
 }
 .print-head{ display:none; }
 .print-head h1{ font-size:16pt; margin:0 0 2mm; font-family:var(--sans); }
@@ -1402,6 +1443,19 @@ function wire(){
     renderDay();
   });
   $("btnPrint").addEventListener("click", ()=>window.print());
+
+  // La stampa riguarda sempre il planning: se l'ordine parte da un'altra
+  // scheda (o dal menu del browser) passo alla settimana e poi ripristino.
+  let printBack = null;
+  window.addEventListener("beforeprint", ()=>{
+    if($("viewWeek").hidden){
+      printBack = $("viewEdit").hidden ? "day" : "edit";
+      showView("week"); renderWeek();
+    }
+  });
+  window.addEventListener("afterprint", ()=>{
+    if(printBack){ showView(printBack); printBack = null; }
+  });
   $("btnTheme").addEventListener("click", ()=>{
     applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
   });
