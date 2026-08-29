@@ -1,0 +1,1545 @@
+<!doctype html>
+<html lang="it" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#eef1f7" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#070b12" media="(prefers-color-scheme: dark)" />
+<meta name="color-scheme" content="light dark" />
+<title>Orario — Raucci Biagio</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   ORARIO — foglio di stile
+   Impostazione chiara: carta, righe sottili, dati in monospaziato.
+   Il tema scuro resta disponibile come variante (interruttore in testata).
+   ========================================================================== */
+:root{
+  /* superfici */
+  --paper:#eef1f7;
+  --card:#ffffff;
+  --card-2:#f7f9fc;
+  --line:#dce3ee;
+  --line-soft:#eaeff7;
+  /* inchiostri */
+  --ink:#0f1b2d;
+  --muted:#5d6d87;
+  --dim:#8c9ab0;
+  /* accenti */
+  --accent:#1f6feb;
+  --accent-weak:#e9f1fe;
+  --amber:#d97706;
+  --ok:#15803d;
+  --bad:#c2410c;
+  --red:#dc2626;
+  /* forma */
+  --r:16px;
+  --r-sm:10px;
+  --shadow:0 1px 2px rgba(15,27,45,.05), 0 10px 28px rgba(15,27,45,.06);
+  --shadow-sm:0 1px 2px rgba(15,27,45,.06);
+  --mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans:"Space Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --display:"Orbitron", var(--sans);
+  --pad:18px;
+}
+html[data-theme="dark"]{
+  --paper:#070b12;
+  --card:#0d141f;
+  --card-2:#111a28;
+  --line:#1e2b45;
+  --line-soft:#18223a;
+  --ink:#e8eef7;
+  --muted:#93a6c2;
+  --dim:#63799a;
+  --accent:#38bdf8;
+  --accent-weak:rgba(56,189,248,.13);
+  --amber:#fbbf24;
+  --ok:#34d399;
+  --bad:#fb923c;
+  --red:#f87171;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 14px 34px rgba(0,0,0,.35);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.4);
+}
+
+*{ box-sizing:border-box; }
+html{ background:var(--paper); }
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:15px;
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:calc(28px + env(safe-area-inset-bottom));
+}
+button{ font-family:inherit; color:inherit; }
+:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:8px; }
+@media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+
+/* ---------- Testata ---------- */
+header{
+  position:sticky; top:0; z-index:60;
+  background:color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter:saturate(1.6) blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.wrap{ max-width:1200px; margin:0 auto; padding:0 var(--pad); }
+.hud{ display:flex; align-items:center; gap:12px; padding:13px 0 10px; }
+.brand{
+  font-family:var(--display); font-weight:800; font-size:14.5px; letter-spacing:.18em;
+  display:flex; align-items:center; gap:10px; white-space:nowrap;
+}
+.brand .led{
+  width:8px; height:8px; border-radius:50%; background:var(--ok);
+  box-shadow:0 0 0 4px color-mix(in srgb, var(--ok) 18%, transparent);
+}
+.brand .led.warn{ background:var(--amber); box-shadow:0 0 0 4px color-mix(in srgb, var(--amber) 18%, transparent); }
+.brand .led.bad{ background:var(--red); box-shadow:0 0 0 4px color-mix(in srgb, var(--red) 18%, transparent); }
+.hud .who{ margin-left:auto; text-align:right; font-size:12px; color:var(--muted); line-height:1.4; }
+.hud .who b{ display:block; color:var(--ink); font-weight:600; font-size:12.5px; }
+.hud .who span{ display:block; max-width:36ch; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.iconbtn{
+  border:1px solid var(--line); background:var(--card); border-radius:10px;
+  width:36px; height:36px; cursor:pointer; font-size:15px; line-height:1; box-shadow:var(--shadow-sm);
+}
+.iconbtn:hover{ border-color:var(--accent); color:var(--accent); }
+
+/* segmentato */
+nav.tabs{
+  display:flex; gap:4px; padding:4px; margin-bottom:14px;
+  background:var(--card); border:1px solid var(--line); border-radius:13px; box-shadow:var(--shadow-sm);
+}
+.tab{
+  flex:1; border:0; background:transparent; color:var(--muted);
+  padding:9px 10px; border-radius:9px; cursor:pointer; font-weight:600; font-size:13.5px;
+  display:flex; align-items:center; justify-content:center; gap:7px;
+  transition:color .15s, background .15s;
+}
+.tab:hover{ color:var(--ink); }
+.tab[aria-selected="true"]{ color:#fff; background:var(--accent); box-shadow:var(--shadow-sm); }
+html[data-theme="dark"] .tab[aria-selected="true"]{ color:#03151f; }
+.tab .lk{ font-size:11px; opacity:.85; }
+
+main{ max-width:1200px; margin:0 auto; padding:14px var(--pad) 40px; }
+section[hidden]{ display:none !important; }
+
+/* ---------- Elementi comuni ---------- */
+.panel{ background:var(--card); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow); }
+.panel + .panel{ margin-top:16px; }
+.panel h2{
+  margin:0; padding:14px 16px; font-size:11.5px; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--muted); border-bottom:1px solid var(--line-soft); font-weight:700;
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+}
+.panel h2 .sp{ margin-left:auto; }
+.pb{ padding:16px; }
+.btn{
+  border:1px solid var(--line); background:var(--card); color:var(--ink);
+  padding:9px 13px; border-radius:var(--r-sm); cursor:pointer; font-weight:600; font-size:13px;
+  box-shadow:var(--shadow-sm); transition:border-color .15s, background .15s, transform .06s;
+}
+.btn:hover{ border-color:var(--accent); color:var(--accent); }
+.btn:active{ transform:translateY(1px); }
+.btn.pri{ background:var(--accent); border-color:var(--accent); color:#fff; }
+html[data-theme="dark"] .btn.pri{ color:#03151f; }
+.btn.pri:hover{ filter:brightness(1.07); color:#fff; }
+html[data-theme="dark"] .btn.pri:hover{ color:#03151f; }
+.btn.warn{ border-color:color-mix(in srgb, var(--amber) 55%, var(--line)); color:var(--amber); }
+.btn.bad{ border-color:color-mix(in srgb, var(--red) 45%, var(--line)); color:var(--red); }
+.btn.bad:hover{ border-color:var(--red); color:var(--red); }
+.btn.sm{ padding:6px 10px; font-size:12px; border-radius:9px; }
+.btn:disabled{ opacity:.45; cursor:not-allowed; box-shadow:none; }
+.row{ display:flex; gap:9px; flex-wrap:wrap; align-items:center; }
+label{ font-size:12px; color:var(--muted); display:block; margin-bottom:6px; font-weight:500; }
+input[type=text], input[type=password], input[type=time], input[type=number], select, textarea{
+  width:100%; border:1px solid var(--line); background:var(--card-2); color:var(--ink);
+  border-radius:var(--r-sm); padding:10px 11px; font-family:var(--sans); font-size:14px; min-height:42px;
+}
+input:focus, select:focus, textarea:focus{
+  outline:none; border-color:var(--accent); background:var(--card);
+  box-shadow:0 0 0 3px var(--accent-weak);
+}
+textarea{ min-height:78px; resize:vertical; font-size:13px; }
+input[type=time], input[type=number]{ font-family:var(--mono); }
+.field{ margin-bottom:13px; }
+.grid2{ display:grid; grid-template-columns:1fr 1fr; gap:13px; }
+@media (max-width:620px){ .grid2{ grid-template-columns:1fr; } }
+.note{ font-size:12.5px; color:var(--muted); line-height:1.55; }
+.tag{
+  display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:11px;
+  padding:4px 9px; border-radius:999px; border:1px solid var(--line); color:var(--muted); background:var(--card);
+}
+
+/* ---------- Selettore giorni ---------- */
+.daybar{ display:flex; gap:7px; margin-bottom:14px; }
+.daybar button{
+  flex:1; border:1px solid var(--line); background:var(--card); color:var(--muted);
+  border-radius:12px; padding:9px 4px; cursor:pointer; font-family:var(--mono); font-weight:700;
+  font-size:12.5px; letter-spacing:.05em; position:relative; box-shadow:var(--shadow-sm);
+  transition:border-color .15s, color .15s, background .15s;
+}
+.daybar button .cnt{ display:block; font-size:10px; color:var(--dim); font-weight:400; margin-top:3px; letter-spacing:0; }
+.daybar button:hover{ border-color:var(--accent); }
+.daybar button[aria-pressed="true"]{ color:var(--accent); border-color:var(--accent); background:var(--accent-weak); }
+.daybar button[aria-pressed="true"] .cnt{ color:var(--accent); opacity:.8; }
+.daybar button.today::after{
+  content:""; position:absolute; top:6px; right:7px; width:5px; height:5px; border-radius:50%; background:var(--amber);
+}
+
+/* ---------- Riquadro "adesso" ---------- */
+.now{
+  border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:var(--r);
+  background:var(--card); box-shadow:var(--shadow); padding:15px 17px; margin-bottom:16px;
+  display:flex; gap:16px; align-items:center; flex-wrap:wrap;
+}
+.now .k{ font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); font-weight:700; }
+.now .v{ font-size:20px; font-weight:700; line-height:1.2; margin-top:4px; letter-spacing:-.01em; }
+.now .s{ font-size:12.5px; color:var(--muted); margin-top:4px; }
+.now .clock{
+  margin-left:auto; text-align:right; font-family:var(--mono); font-weight:800; font-size:27px;
+  letter-spacing:-.02em; font-variant-numeric:tabular-nums;
+}
+.now .clock small{ display:block; font-size:11px; font-weight:500; color:var(--muted); letter-spacing:.04em; margin-top:2px; }
+.now.idle{ border-left-color:var(--line); }
+.now.idle .k{ color:var(--muted); }
+
+/* ---------- Nastro orario (vista giorno) ---------- */
+.tape{
+  border:1px solid var(--line); border-radius:var(--r); overflow:hidden;
+  background:var(--card); box-shadow:var(--shadow);
+}
+.lane{
+  display:grid; grid-template-columns:84px 1fr; position:relative;
+  border-bottom:1px solid var(--line-soft);
+  min-height:calc(var(--dur, 50) * 1.30px);
+}
+.lane:last-child{ border-bottom:0; }
+.lane-time{
+  border-right:1px solid var(--line-soft); padding:13px 8px 13px 14px;
+  font-family:var(--mono); background:var(--card-2); position:relative;
+  font-variant-numeric:tabular-nums;
+}
+.lane-time .a{ font-size:14px; font-weight:700; }
+.lane-time .b{ font-size:11.5px; color:var(--muted); margin-top:2px; }
+.lane-time .n{
+  position:absolute; right:9px; bottom:9px; font-size:9.5px; color:var(--dim);
+  border:1px solid var(--line); border-radius:5px; padding:1px 4px; background:var(--card);
+}
+.lane-body{ padding:12px 16px; display:flex; flex-direction:column; justify-content:center; gap:5px; }
+.lane.busy .lane-body{ border-left:4px solid var(--c, var(--accent)); margin-left:-4px; padding-left:18px; }
+.lane.memo .lane-body{ border-left:4px dashed color-mix(in srgb, var(--amber) 60%, transparent); margin-left:-4px; padding-left:18px; }
+.lesson-h{ display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+.lesson-cls{ font-family:var(--mono); font-weight:800; font-size:17px; letter-spacing:-.01em; }
+.lesson-room{ font-size:12.5px; color:var(--muted); font-family:var(--mono); }
+.lesson-sub{ font-size:14px; font-weight:500; line-height:1.35; }
+.lesson-note{ font-size:12.5px; color:var(--muted); white-space:pre-wrap; line-height:1.4; }
+.lane.free .lane-body{ color:var(--dim); font-size:13px; }
+.lane.free .lane-time{ opacity:.6; }
+.lane.past{ opacity:.45; }
+.lane.current{ background:var(--accent-weak); }
+.needle{ position:absolute; left:0; right:0; height:0; border-top:2px solid var(--amber); z-index:3; }
+.needle::before{
+  content:""; position:absolute; left:0; top:-4px; width:8px; height:8px; border-radius:50%;
+  background:var(--amber); box-shadow:0 0 0 3px color-mix(in srgb, var(--amber) 22%, transparent);
+}
+.empty-state{ padding:40px 20px; text-align:center; color:var(--muted); font-size:14px; line-height:1.6; }
+.empty-state b{ display:block; color:var(--ink); font-size:16.5px; margin-bottom:7px; font-weight:600; }
+
+/* ---------- Planning settimanale ---------- */
+.weekwrap{ overflow-x:auto; border:1px solid var(--line); border-radius:var(--r); background:var(--card); }
+table.week{ border-collapse:separate; border-spacing:0; width:100%; min-width:820px; }
+table.week th, table.week td{ border-bottom:1px solid var(--line-soft); border-right:1px solid var(--line-soft); padding:0; }
+table.week th:last-child, table.week td:last-child{ border-right:0; }
+table.week tbody tr:last-child td{ border-bottom:0; }
+table.week thead th{
+  position:sticky; top:0; z-index:4; background:var(--card-2); padding:11px 10px;
+  font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:700;
+}
+table.week thead th.today{ color:var(--accent); box-shadow:inset 0 -2px 0 var(--accent); }
+table.week td.hour, table.week thead th.hour{
+  position:sticky; left:0; z-index:5; background:var(--card-2); width:76px; min-width:76px;
+  font-family:var(--mono); text-align:center; padding:9px 4px;
+}
+table.week td.hour{ color:var(--dim); font-size:10.5px; line-height:1.4; }
+table.week td.hour b{ display:block; color:var(--ink); font-size:13px; }
+.wcell{ min-height:66px; padding:9px 10px; display:flex; flex-direction:column; gap:3px; }
+.wcell.has{ border-left:3px solid var(--c); background:color-mix(in srgb, var(--c) 8%, transparent); }
+.wcell .c{ font-family:var(--mono); font-weight:800; font-size:13.5px; }
+.wcell .s{ font-size:11.5px; color:var(--muted); line-height:1.3; }
+.wcell .r{ font-size:11px; color:var(--dim); font-family:var(--mono); }
+.wcell .t{ font-size:10px; color:var(--dim); font-family:var(--mono); margin-top:auto; padding-top:4px; }
+td.tdcol.today{ background:color-mix(in srgb, var(--accent) 4%, transparent); }
+.editing .wcell{ cursor:pointer; border-radius:6px; transition:background .12s; }
+.editing .wcell:hover{ background:var(--accent-weak); box-shadow:inset 0 0 0 1px var(--accent); }
+.legend{ display:flex; flex-wrap:wrap; gap:14px; margin-top:14px; }
+.legend .li{ display:flex; align-items:center; gap:7px; font-size:12px; color:var(--muted); font-family:var(--mono); }
+.legend .sw{ width:11px; height:11px; border-radius:3px; background:var(--c); }
+
+/* ---------- Modali ---------- */
+.back{
+  position:fixed; inset:0; background:rgba(15,27,45,.34); backdrop-filter:blur(3px);
+  display:flex; align-items:center; justify-content:center; padding:16px; z-index:100;
+}
+html[data-theme="dark"] .back{ background:rgba(3,6,12,.7); }
+.back[hidden]{ display:none; }
+.modal{
+  width:min(580px, 100%); max-height:88vh; overflow:auto; background:var(--card);
+  border:1px solid var(--line); border-radius:20px; box-shadow:0 24px 70px rgba(15,27,45,.24);
+}
+.modal header{ position:static; background:var(--card); backdrop-filter:none; border-bottom:1px solid var(--line-soft); padding:16px; display:flex; align-items:center; gap:10px; }
+.modal header h3{ margin:0; font-size:15.5px; font-weight:700; }
+.modal header .x{ margin-left:auto; background:none; border:0; color:var(--muted); font-size:22px; cursor:pointer; line-height:1; padding:2px 8px; }
+.modal header .x:hover{ color:var(--ink); }
+.modal .mb{ padding:16px; }
+.modal .mf{ padding:13px 16px; border-top:1px solid var(--line-soft); display:flex; gap:9px; flex-wrap:wrap; background:var(--card-2); border-radius:0 0 20px 20px; }
+.modal .mf .sp{ margin-left:auto; }
+.swatches{ display:flex; flex-wrap:wrap; gap:8px; margin-top:9px; }
+.swatches button{ width:28px; height:28px; border-radius:9px; border:2px solid transparent; cursor:pointer; box-shadow:var(--shadow-sm); }
+.swatches button[aria-pressed="true"]{ border-color:var(--ink); }
+.msg{ font-size:12.5px; padding:11px 13px; border-radius:var(--r-sm); margin-bottom:13px; line-height:1.5; border:1px solid; }
+.msg.err{ background:color-mix(in srgb, var(--red) 8%, var(--card)); border-color:color-mix(in srgb, var(--red) 35%, transparent); color:var(--red); }
+.msg.ok{ background:color-mix(in srgb, var(--ok) 8%, var(--card)); border-color:color-mix(in srgb, var(--ok) 35%, transparent); color:var(--ok); }
+.msg.info{ background:var(--accent-weak); border-color:color-mix(in srgb, var(--accent) 28%, transparent); color:var(--accent); }
+.msg code{ font-family:var(--mono); font-size:11.5px; }
+
+/* ---------- Editor ---------- */
+.times-tbl{ width:100%; border-collapse:collapse; font-family:var(--mono); font-size:13px; }
+.times-tbl th{ text-align:left; font-size:10.5px; color:var(--muted); font-weight:700; padding:6px; text-transform:uppercase; letter-spacing:.1em; }
+.times-tbl td{ padding:5px 6px; border-top:1px solid var(--line-soft); }
+.times-tbl input{ min-height:38px; padding:6px 9px; }
+.toast{
+  position:fixed; left:50%; bottom:26px; transform:translateX(-50%);
+  background:var(--ink); color:var(--card); border:1px solid var(--ink);
+  padding:12px 18px; border-radius:12px; font-size:13px; font-weight:500; z-index:200;
+  box-shadow:0 12px 40px rgba(15,27,45,.28); max-width:92vw; text-align:center;
+}
+.toast.ok{ background:var(--ok); border-color:var(--ok); color:#fff; }
+.toast.err{ background:var(--red); border-color:var(--red); color:#fff; }
+
+/* ---------- Mobile ---------- */
+@media (max-width:560px){
+  :root{ --pad:13px; }
+  body{ font-size:14.5px; }
+  .hud .who{ display:none; }
+  .now{ padding:13px 14px; gap:12px; }
+  .now .clock{ font-size:23px; }
+  .now .v{ font-size:18px; }
+  .lane{ grid-template-columns:70px 1fr; }
+  .lane-time{ padding:11px 6px 11px 11px; }
+  .lane-time .n{ display:none; }
+  .lane-body{ padding:11px 13px; }
+  .lane.busy .lane-body, .lane.memo .lane-body{ padding-left:15px; }
+  .tab{ font-size:12.5px; padding:9px 6px; }
+  .brand{ font-size:13px; letter-spacing:.14em; }
+}
+
+/* ---------- Stampa: planning A4 orizzontale ---------- */
+@media print{
+  @page{ size:A4 landscape; margin:12mm; }
+  html, body{ background:#fff; color:#000; }
+  header, nav.tabs, .daybar, .now, .noprint, .legend{ display:none !important; }
+  main{ max-width:none; padding:0; }
+  .panel{ border:0; box-shadow:none; background:none; }
+  .panel h2{ display:none; }
+  .pb{ padding:0; }
+  .weekwrap{ border:0; overflow:visible; }
+  table.week{ min-width:0; }
+  table.week th, table.week td{ border:.4pt solid #777 !important; }
+  table.week thead th, table.week td.hour{ background:#eee !important; color:#000 !important; position:static; box-shadow:none !important; }
+  .wcell{ background:none !important; border-left:2.5pt solid var(--c, #999) !important; min-height:52px; }
+  .wcell .c, .wcell .s, .wcell .r, .wcell .t{ color:#000 !important; }
+  td.tdcol.today{ background:none !important; }
+  .print-head{ display:block !important; margin-bottom:7mm; }
+}
+.print-head{ display:none; }
+.print-head h1{ font-size:16pt; margin:0 0 2mm; font-family:var(--sans); }
+.print-head p{ margin:0; font-size:9.5pt; color:#333; }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="hud">
+      <div class="brand"><span class="led" id="led"></span>ORARIO</div>
+      <div class="who">
+        <b id="whoTeacher">—</b>
+        <span id="whoSchool">—</span>
+      </div>
+      <button class="iconbtn" id="btnTheme" title="Tema chiaro o scuro" aria-label="Cambia tema">☾</button>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button class="tab" id="tabDay"  role="tab" aria-selected="true">Giorno</button>
+      <button class="tab" id="tabWeek" role="tab" aria-selected="false">Settimana</button>
+      <button class="tab" id="tabEdit" role="tab" aria-selected="false">Modifica <span class="lk" id="lockIcon">🔒</span></button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============================ VISTA GIORNO ============================ -->
+  <section id="viewDay">
+    <div class="daybar" id="dayBar"></div>
+    <div class="now" id="nowBox"></div>
+    <div class="tape" id="tape"></div>
+    <div class="row" style="margin-top:12px; justify-content:space-between;">
+      <button class="btn sm" id="btnToggleFree">Mostra ore libere</button>
+      <span class="tag" id="stampData">—</span>
+    </div>
+  </section>
+
+  <!-- ========================== VISTA SETTIMANA =========================== -->
+  <section id="viewWeek" hidden>
+    <div class="print-head">
+      <h1>Orario settimanale</h1>
+      <p id="printMeta">—</p>
+    </div>
+    <div class="panel">
+      <h2>Planning settimanale
+        <span class="sp"></span>
+        <div class="row noprint">
+          <button class="btn sm" id="btnPrint">Stampa / PDF</button>
+        </div>
+      </h2>
+      <div class="pb">
+        <div class="weekwrap"><table class="week" id="weekTable"></table></div>
+        <div class="legend" id="weekLegend"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ VISTA EDITOR ============================ -->
+  <section id="viewEdit" hidden>
+    <div class="panel">
+      <h2>Griglia — tocca una casella per modificarla
+        <span class="sp"></span>
+        <div class="row">
+          <button class="btn sm" id="btnPasteInfo" disabled>Appunti vuoti</button>
+          <button class="btn sm" id="btnTimes">Ore e orari</button>
+        </div>
+      </h2>
+      <div class="pb">
+        <div class="weekwrap editing"><table class="week" id="editTable"></table></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Intestazione</h2>
+      <div class="pb">
+        <div class="grid2">
+          <div class="field"><label for="inpTeacher">Docente</label><input type="text" id="inpTeacher"></div>
+          <div class="field"><label for="inpSchool">Istituto</label><input type="text" id="inpSchool"></div>
+        </div>
+        <div class="field">
+          <label>Giorni in cui mostrare anche le ore libere</label>
+          <div class="row" id="emptyDays"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Salvataggio e sincronizzazione</h2>
+      <div class="pb">
+        <div id="syncMsg"></div>
+        <div class="row" style="margin-bottom:14px;">
+          <button class="btn pri" id="btnSave">Salva l'orario</button>
+          <button class="btn" id="btnReload">Ricarica dal server</button>
+          <button class="btn" id="btnExport">Esporta JSON</button>
+          <button class="btn" id="btnImport">Importa JSON</button>
+          <span class="sp" style="margin-left:auto"></span>
+          <button class="btn warn" id="btnLock">Blocca</button>
+        </div>
+        <div class="grid2">
+          <div class="field"><label for="cfgOwner">Utente GitHub</label><input type="text" id="cfgOwner" placeholder="braucci"></div>
+          <div class="field"><label for="cfgRepo">Repository</label><input type="text" id="cfgRepo" placeholder="orario"></div>
+          <div class="field"><label for="cfgBranch">Ramo</label><input type="text" id="cfgBranch" placeholder="main"></div>
+          <div class="field"><label for="cfgPath">File JSON nel repo</label><input type="text" id="cfgPath" placeholder="orario_schedule.json"></div>
+        </div>
+        <div class="row">
+          <button class="btn" id="btnCfgSave">Salva impostazioni</button>
+          <button class="btn" id="btnCfgTest">Verifica accesso</button>
+          <button class="btn bad" id="btnCfgWipe">Elimina credenziali da questo dispositivo</button>
+        </div>
+        <p class="note" style="margin-top:12px;">
+          Il token GitHub resta su questo dispositivo, cifrato con AES-GCM: la password lo apre, e non viene mai trasmessa né salvata.
+          Su un dispositivo nuovo dovrai reinserire token e password una volta sola.
+        </p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============================ MODALE LEZIONE ============================ -->
+<div class="back" id="mLesson" hidden>
+  <div class="modal">
+    <header><h3 id="mLessonTitle">Lezione</h3><button class="x" data-close="mLesson">×</button></header>
+    <div class="mb">
+      <div class="grid2">
+        <div class="field"><label for="fClass">Classe</label><input type="text" id="fClass" placeholder="4ACA"></div>
+        <div class="field"><label for="fRoom">Aula / laboratorio</label><input type="text" id="fRoom" placeholder="Aula 2.11"></div>
+      </div>
+      <div class="field"><label for="fSubject">Materia</label><input type="text" id="fSubject" placeholder="Strutt. Costr. Sist. e Impianti"></div>
+      <div class="field"><label for="fAbbr">Sigla per la stampa <span style="opacity:.7">(facoltativa)</span></label><input type="text" id="fAbbr" placeholder="SCSI"></div>
+      <div class="field"><label for="fNotes">Note</label><textarea id="fNotes" placeholder="Compresenza, dove prendere i ragazzi, ecc."></textarea></div>
+      <div class="field">
+        <label for="fColor">Colore</label>
+        <input type="text" id="fColor" placeholder="#22d3ee" style="font-family:var(--mono)">
+        <div class="swatches" id="swatches"></div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn bad" id="btnCellClear">Svuota</button>
+      <button class="btn" id="btnCellCopy">Copia</button>
+      <button class="btn" id="btnCellPaste">Incolla</button>
+      <span class="sp"></span>
+      <button class="btn pri" id="btnCellApply">Applica</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================= MODALE ORARI ============================= -->
+<div class="back" id="mTimes" hidden>
+  <div class="modal">
+    <header><h3>Ore e orari</h3><button class="x" data-close="mTimes">×</button></header>
+    <div class="mb">
+      <div class="field">
+        <label for="tDay">Giorno</label>
+        <select id="tDay"></select>
+      </div>
+      <div class="msg info">Genera una scaletta continua indicando inizio, durata della prima ora e delle successive; poi correggi a mano ciò che serve.</div>
+      <div class="row" style="margin-bottom:12px;">
+        <input type="time" id="genStart" value="08:15" style="width:120px">
+        <input type="number" id="genFirst" value="60" min="20" max="120" style="width:88px" title="durata 1ª ora">
+        <input type="number" id="genNext" value="50" min="20" max="120" style="width:88px" title="durata ore successive">
+        <input type="number" id="genN" value="6" min="1" max="12" style="width:76px" title="numero di ore">
+        <button class="btn" id="btnGen">Genera</button>
+      </div>
+      <table class="times-tbl" id="timesTbl"></table>
+      <div class="row" style="margin-top:10px;">
+        <button class="btn sm" id="btnAddSlot">Aggiungi ora</button>
+        <button class="btn sm bad" id="btnDelSlot">Togli l'ultima</button>
+      </div>
+    </div>
+    <div class="mf">
+      <span class="sp"></span>
+      <button class="btn pri" id="btnTimesApply">Applica</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ MODALE ACCESSO ============================ -->
+<div class="back" id="mAuth" hidden>
+  <div class="modal" style="width:min(440px,100%)">
+    <header><h3 id="authTitle">Accesso</h3><button class="x" data-close="mAuth">×</button></header>
+    <div class="mb">
+      <div id="authMsg"></div>
+      <div id="authUnlock">
+        <div class="field">
+          <label for="authPw">Password</label>
+          <input type="password" id="authPw" autocomplete="current-password" placeholder="••••••••">
+        </div>
+      </div>
+      <div id="authSetup" hidden>
+        <div class="msg info">
+          Primo avvio su questo dispositivo. Serve un token GitHub <b>fine-grained</b> con permesso
+          <i>Contents: Read and write</i> sul solo repository dell'orario. La password che scegli qui cifra il token.
+        </div>
+        <div class="field">
+          <label for="setToken">Token GitHub</label>
+          <input type="password" id="setToken" placeholder="github_pat_…" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="setPw">Nuova password</label>
+          <input type="password" id="setPw" autocomplete="new-password">
+        </div>
+        <div class="field">
+          <label for="setPw2">Ripeti la password</label>
+          <input type="password" id="setPw2" autocomplete="new-password">
+        </div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn" id="btnAuthSwitch">Configura da capo</button>
+      <span class="sp"></span>
+      <button class="btn pri" id="btnAuthGo">Sblocca</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="fileInput" accept="application/json,.json" hidden>
+
+<script>
+"use strict";
+
+/* ==========================================================================
+   1. Configurazione
+   ========================================================================== */
+
+const DEFAULT_CONFIG = {
+  backend: "github",              // "github" | "php" | "local"
+  dataUrl: "orario_schedule.json",// lettura pubblica, percorso relativo
+  phpApi:  "orario_api.php",      // usato solo se backend === "php"
+  github:  { owner:"braucci", repo:"orario", branch:"main", path:"orario_schedule.json" },
+  autoLockMinutes: 20
+};
+
+const LS = {
+  cfg:   "orario_cfg_v1",
+  vault: "orario_vault_v1",
+  cache: "orario_cache_v1",
+  local: "orario_local_v1",
+  free:  "orario_showfree_v1",
+  theme: "orario_theme_v1"
+};
+
+let CFG = loadConfig();
+function loadConfig(){
+  try{
+    const raw = localStorage.getItem(LS.cfg);
+    if(!raw) return structuredClone(DEFAULT_CONFIG);
+    const o = JSON.parse(raw);
+    return { ...structuredClone(DEFAULT_CONFIG), ...o, github:{ ...DEFAULT_CONFIG.github, ...(o.github||{}) } };
+  }catch{ return structuredClone(DEFAULT_CONFIG); }
+}
+function saveConfig(){ localStorage.setItem(LS.cfg, JSON.stringify(CFG)); }
+
+const DAYS = [
+  { key:"LUN", label:"Lunedì",    short:"LUN" },
+  { key:"MAR", label:"Martedì",   short:"MAR" },
+  { key:"MER", label:"Mercoledì", short:"MER" },
+  { key:"GIO", label:"Giovedì",   short:"GIO" },
+  { key:"VEN", label:"Venerdì",   short:"VEN" }
+];
+const PALETTE = ["#22d3ee","#6d5efc","#0b7dbb","#9aa6ff","#f59e0b","#fb923c","#34d399","#00d26a","#f3e048","#f87171","#ff2d2d","#a78bfa","#60a5fa","#94a3b8"];
+
+/* ==========================================================================
+   2. Utilità
+   ========================================================================== */
+
+const $  = (id) => document.getElementById(id);
+const el = (tag, cls, txt) => { const n = document.createElement(tag); if(cls) n.className = cls; if(txt != null) n.textContent = txt; return n; };
+const clone = (x) => JSON.parse(JSON.stringify(x));
+
+function toMin(hhmm){ const [h,m] = String(hhmm||"0:0").split(":").map(Number); return (h||0)*60 + (m||0); }
+function toHHMM(min){ const h = Math.floor(min/60)%24, m = ((min%60)+60)%60; return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0"); }
+function dayKeyOf(date){ return ({1:"LUN",2:"MAR",3:"MER",4:"GIO",5:"VEN"})[date.getDay()] || null; }
+function dayLabel(k){ return (DAYS.find(d=>d.key===k)||{}).label || k; }
+function nowMinutes(){ const d = new Date(); return d.getHours()*60 + d.getMinutes(); }
+
+function toast(text, kind){
+  document.querySelectorAll(".toast").forEach(t=>t.remove());
+  const t = el("div", "toast" + (kind ? " "+kind : ""), text);
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3200);
+}
+function applyTheme(t){
+  document.documentElement.setAttribute("data-theme", t);
+  localStorage.setItem(LS.theme, t);
+  const b = $("btnTheme");
+  if(b){ b.textContent = (t === "dark" ? "☀" : "☾"); }
+}
+function initTheme(){
+  const saved = localStorage.getItem(LS.theme);
+  applyTheme(saved || "light");
+}
+
+function setLed(kind, title){
+  const led = $("led");
+  led.className = "led" + (kind === "ok" ? "" : " " + kind);
+  led.title = title || "";
+}
+function msgInto(container, kind, html){
+  container.innerHTML = "";
+  if(!html) return;
+  const d = el("div", "msg " + kind);
+  d.innerHTML = html;
+  container.appendChild(d);
+}
+
+/* Sigla automatica della materia, per la stampa. */
+function autoAbbr(subject){
+  const s = (subject||"").trim();
+  if(!s || s === "—") return "";
+  const map = [
+    [/strutt.*costr.*sist.*impianti/i, "SCSI"],
+    [/logistica/i, "Logistica"],
+    [/ricevimento/i, "Ricevimento"],
+    [/\bSTA\b/i, "STA"]
+  ];
+  for(const [re, out] of map) if(re.test(s)) return out;
+  return s.length <= 14 ? s : s.split(/\s+/).map(w=>w[0]).join("").toUpperCase().slice(0,6);
+}
+
+/* ==========================================================================
+   3. Modello dati
+   ========================================================================== */
+
+const EMPTY_DATA = {
+  meta:{ school:"", teacher:"", showEmptyDays:["MAR","GIO"], updatedISO:new Date().toISOString() },
+  days: DAYS.map(d=>d.key),
+  timeSlots:{}, cells:{}
+};
+
+/**
+ * Riporta qualsiasi versione del file a una forma canonica.
+ * Nota: le celle possono arrivare come array (indice implicito) oppure come
+ * oggetto {"3": {...}}. Qui diventano sempre oggetto indicizzato per ora.
+ * A differenza della versione precedente NON si fondono le lezioni di default:
+ * così una cella cancellata resta cancellata anche dopo un ricaricamento.
+ */
+function normalize(d){
+  const out = clone(EMPTY_DATA);
+  d = d || {};
+  out.meta = { ...out.meta, ...(d.meta||{}) };
+  out.meta.showEmptyDays = Array.isArray(out.meta.showEmptyDays)
+    ? out.meta.showEmptyDays.filter(k => DAYS.some(x=>x.key===k)) : [];
+  out.days = DAYS.map(x=>x.key);
+
+  for(const day of out.days){
+    const src = (d.timeSlots||{})[day];
+    out.timeSlots[day] = Array.isArray(src)
+      ? src.map(s=>({ start:String(s?.start||"").slice(0,5), end:String(s?.end||"").slice(0,5) }))
+           .filter(s=>s.start && s.end)
+      : [];
+
+    out.cells[day] = {};
+    const c = (d.cells||{})[day];
+    if(Array.isArray(c)){
+      c.forEach((v,i)=>{ if(v) out.cells[day][i] = cleanCell(v); });
+    }else if(c && typeof c === "object"){
+      for(const k of Object.keys(c)){
+        const i = Number(k);
+        if(Number.isInteger(i) && i >= 0 && c[k]) out.cells[day][i] = cleanCell(c[k]);
+      }
+    }
+  }
+  return out;
+}
+function cleanCell(v){
+  return {
+    class:   String(v.class   ?? "").trim(),
+    subject: String(v.subject ?? "").trim(),
+    abbr:    String(v.abbr    ?? "").trim(),
+    room:    String(v.room    ?? "").trim(),
+    notes:   String(v.notes   ?? "").trim(),
+    color:   /^#[0-9a-f]{3,8}$/i.test(v.color||"") ? v.color : "#60a5fa"
+  };
+}
+function isRealLesson(c){
+  if(!c) return false;
+  const cl = (c.class||"").replace(/[=\-—\s]/g,"");
+  return cl.length > 0 || (c.subject||"").replace(/[—\-\s]/g,"").length > 0;
+}
+function slotsOf(day){ return (STATE.timeSlots||{})[day] || []; }
+function cellAt(day, i){ return ((STATE.cells||{})[day] || {})[i] || null; }
+function maxSlots(){ return Math.max(0, ...DAYS.map(d=>slotsOf(d.key).length)); }
+
+/* ==========================================================================
+   4. Cifratura del token (PBKDF2-SHA256 + AES-GCM)
+   ========================================================================== */
+
+const ITER = 210000;
+const enc = new TextEncoder(), dec = new TextDecoder();
+
+function b64(bytes){ let s=""; for(const b of bytes) s += String.fromCharCode(b); return btoa(s); }
+function unb64(str){ const s = atob(str); const a = new Uint8Array(s.length); for(let i=0;i<s.length;i++) a[i]=s.charCodeAt(i); return a; }
+function b64utf8(text){ return b64(enc.encode(text)); }
+
+async function deriveKey(password, salt){
+  const base = await crypto.subtle.importKey("raw", enc.encode(password), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey(
+    { name:"PBKDF2", salt, iterations:ITER, hash:"SHA-256" },
+    base, { name:"AES-GCM", length:256 }, false, ["encrypt","decrypt"]
+  );
+}
+async function sealToken(password, token){
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const iv   = crypto.getRandomValues(new Uint8Array(12));
+  const key  = await deriveKey(password, salt);
+  const ct   = await crypto.subtle.encrypt({ name:"AES-GCM", iv }, key, enc.encode(JSON.stringify({ token, check:"orario" })));
+  return { v:1, iter:ITER, salt:b64(salt), iv:b64(iv), ct:b64(new Uint8Array(ct)) };
+}
+async function openToken(password, vault){
+  const key = await deriveKey(password, unb64(vault.salt));
+  const pt  = await crypto.subtle.decrypt({ name:"AES-GCM", iv:unb64(vault.iv) }, key, unb64(vault.ct));
+  const obj = JSON.parse(dec.decode(pt));
+  if(obj.check !== "orario") throw new Error("vault non valido");
+  return obj.token;
+}
+function getVault(){ try{ return JSON.parse(localStorage.getItem(LS.vault) || "null"); }catch{ return null; } }
+function setVault(v){ localStorage.setItem(LS.vault, JSON.stringify(v)); }
+
+/* Sessione: il token in chiaro vive solo in memoria, con blocco automatico. */
+const SESSION = { token:null, timer:null };
+function isUnlocked(){ return SESSION.token !== null || CFG.backend === "local"; }
+function touchSession(){
+  if(SESSION.token === null) return;
+  clearTimeout(SESSION.timer);
+  SESSION.timer = setTimeout(()=>{ lock("Sessione scaduta: orario di nuovo in sola lettura."); }, CFG.autoLockMinutes*60000);
+}
+function lock(why){
+  SESSION.token = null;
+  clearTimeout(SESSION.timer);
+  $("lockIcon").textContent = "🔒";
+  if(!$("viewEdit").hidden) showView("day");
+  if(why) toast(why);
+}
+function unlockedUI(){
+  $("lockIcon").textContent = "🔓";
+  touchSession();
+}
+
+/* ==========================================================================
+   5. Lettura e scrittura
+   ========================================================================== */
+
+async function loadData(){
+  // 1) sorgente remota
+  if(CFG.backend !== "local"){
+    const urls = [];
+    if(CFG.backend === "php") urls.push(CFG.phpApi + "?action=load");
+    urls.push(CFG.dataUrl + (CFG.dataUrl.includes("?") ? "&" : "?") + "_=" + Date.now());
+    if(CFG.github.owner && CFG.github.repo){
+      const g = CFG.github;
+      urls.push(`https://raw.githubusercontent.com/${g.owner}/${g.repo}/${g.branch}/${g.path}?_=${Date.now()}`);
+    }
+    for(const u of urls){
+      try{
+        const r = await fetch(u, { cache:"no-store" });
+        if(!r.ok) throw new Error("HTTP " + r.status);
+        const j = await r.json();
+        const data = normalize(j);
+        localStorage.setItem(LS.cache, JSON.stringify({ at:new Date().toISOString(), data:j }));
+        setLed("ok", "Dati aggiornati");
+        return { data, origin:"remoto", at:null };
+      }catch(e){ /* provo la sorgente successiva */ }
+    }
+  }
+  // 2) copia locale di lavoro (modalità "local")
+  const localRaw = localStorage.getItem(LS.local);
+  if(CFG.backend === "local" && localRaw){
+    setLed("warn", "Archivio locale");
+    return { data:normalize(JSON.parse(localRaw)), origin:"locale", at:null };
+  }
+  // 3) cache dell'ultimo caricamento riuscito
+  try{
+    const c = JSON.parse(localStorage.getItem(LS.cache) || "null");
+    if(c){
+      setLed("warn", "Copia offline");
+      return { data:normalize(c.data), origin:"cache", at:c.at };
+    }
+  }catch{}
+  setLed("bad", "Nessun dato");
+  return { data:normalize(null), origin:"vuoto", at:null };
+}
+
+async function saveData(data){
+  data.meta.updatedISO = new Date().toISOString();
+
+  if(CFG.backend === "local"){
+    localStorage.setItem(LS.local, JSON.stringify(data));
+    return { ok:true, where:"questo dispositivo" };
+  }
+  if(CFG.backend === "php"){
+    const r = await fetch(CFG.phpApi + "?action=save", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json", "X-Orario-Token": SESSION.token || "" },
+      body: JSON.stringify(data)
+    });
+    const j = await r.json().catch(()=>({}));
+    if(!r.ok || !j.ok) throw new Error(j.error || ("HTTP " + r.status));
+    return { ok:true, where:"server" };
+  }
+
+  // GitHub Contents API
+  const g = CFG.github;
+  if(!g.owner || !g.repo) throw new Error("Repository non configurato.");
+  if(!SESSION.token) throw new Error("Sessione bloccata.");
+  const api = `https://api.github.com/repos/${g.owner}/${g.repo}/contents/${g.path.split("/").map(encodeURIComponent).join("/")}`;
+  const H = { Authorization:"Bearer " + SESSION.token, Accept:"application/vnd.github+json", "X-GitHub-Api-Version":"2022-11-28" };
+
+  let sha;
+  const head = await fetch(`${api}?ref=${encodeURIComponent(g.branch)}`, { headers:H, cache:"no-store" });
+  if(head.ok) sha = (await head.json()).sha;
+  else if(head.status !== 404) throw new Error(await ghError(head));
+
+  const put = await fetch(api, {
+    method:"PUT",
+    headers:{ ...H, "Content-Type":"application/json" },
+    body: JSON.stringify({
+      message: "orario: aggiornamento " + new Date().toLocaleString("it-IT"),
+      content: b64utf8(JSON.stringify(data, null, 2)),
+      branch: g.branch,
+      ...(sha ? { sha } : {})
+    })
+  });
+  if(!put.ok) throw new Error(await ghError(put));
+  localStorage.setItem(LS.cache, JSON.stringify({ at:new Date().toISOString(), data }));
+  return { ok:true, where:`${g.owner}/${g.repo}` };
+}
+
+async function ghError(r){
+  let d = {}; try{ d = await r.json(); }catch{}
+  if(r.status === 401) return "Token rifiutato (401): scaduto o revocato.";
+  if(r.status === 403) return "Permesso negato (403): al token manca «Contents: Read and write» su questo repository.";
+  if(r.status === 404) return "Repository o percorso inesistente (404): controlla utente, repo, ramo e nome del file.";
+  if(r.status === 409) return "Conflitto (409): il file è cambiato altrove. Ricarica e riprova.";
+  return `GitHub ha risposto ${r.status}${d.message ? " — " + d.message : ""}`;
+}
+
+/* ==========================================================================
+   6. Stato e viste
+   ========================================================================== */
+
+let STATE = normalize(null);
+let SELECTED_DAY = dayKeyOf(new Date()) || "LUN";
+let SHOW_FREE = localStorage.getItem(LS.free) === "1";
+let CLIPBOARD = null;
+let DATA_ORIGIN = { origin:"vuoto", at:null };
+
+function showView(which){
+  const map = { day:"viewDay", week:"viewWeek", edit:"viewEdit" };
+  for(const [k,v] of Object.entries(map)) $(v).hidden = (k !== which);
+  $("tabDay").setAttribute("aria-selected", which === "day");
+  $("tabWeek").setAttribute("aria-selected", which === "week");
+  $("tabEdit").setAttribute("aria-selected", which === "edit");
+  window.scrollTo({ top:0, behavior:"instant" });
+}
+
+function renderHeader(){
+  $("whoTeacher").textContent = STATE.meta.teacher || "—";
+  $("whoSchool").textContent  = STATE.meta.school  || "—";
+  const upd = STATE.meta.updatedISO ? new Date(STATE.meta.updatedISO) : null;
+  $("printMeta").textContent = [STATE.meta.teacher, STATE.meta.school].filter(Boolean).join(" — ");
+  const origine = { remoto:"in linea", cache:"copia offline", locale:"archivio locale", vuoto:"nessun dato" }[DATA_ORIGIN.origin];
+  $("stampData").textContent = (upd ? "Aggiornato " + upd.toLocaleDateString("it-IT",{day:"2-digit",month:"short",year:"numeric"}) : "Mai aggiornato") + " · " + origine;
+}
+
+/* ---------- 6.1 Vista giorno ---------- */
+
+function renderDayBar(){
+  const bar = $("dayBar"); bar.innerHTML = "";
+  const today = dayKeyOf(new Date());
+  for(const d of DAYS){
+    const n = Object.values(STATE.cells[d.key]||{}).filter(isRealLesson).length;
+    const b = el("button");
+    b.setAttribute("aria-pressed", d.key === SELECTED_DAY);
+    if(d.key === today) b.classList.add("today");
+    b.appendChild(el("span", null, d.short));
+    b.appendChild(el("span", "cnt", n ? n + (n===1 ? " ora" : " ore") : "—"));
+    b.addEventListener("click", ()=>{ SELECTED_DAY = d.key; renderDayBar(); renderDay(); });
+    bar.appendChild(b);
+  }
+}
+
+/** Trova la lezione in corso e la successiva nel giorno indicato. */
+function dayStatus(dayKey){
+  const isToday = dayKeyOf(new Date()) === dayKey;
+  if(!isToday) return { isToday:false };
+  const now = nowMinutes();
+  const slots = slotsOf(dayKey);
+  let current = null, next = null;
+  for(let i=0;i<slots.length;i++){
+    const s = toMin(slots[i].start), e = toMin(slots[i].end);
+    const c = cellAt(dayKey, i);
+    if(now >= s && now < e) current = { i, slot:slots[i], cell:c, left:e-now };
+    if(now < s && next === null && isRealLesson(c)) next = { i, slot:slots[i], cell:c, inMin:s-now };
+  }
+  return { isToday:true, current, next, now };
+}
+
+function renderNow(){
+  const box = $("nowBox");
+  box.innerHTML = "";
+  const st = dayStatus(SELECTED_DAY);
+  const clock = el("div","clock");
+  const d = new Date();
+  clock.appendChild(document.createTextNode(String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")));
+  clock.appendChild(el("small", null, d.toLocaleDateString("it-IT",{ weekday:"long", day:"numeric", month:"long" })));
+
+  const left = el("div");
+  if(!st.isToday){
+    box.className = "now idle";
+    left.appendChild(el("div","k","Consultazione"));
+    left.appendChild(el("div","v", dayLabel(SELECTED_DAY)));
+    const n = Object.values(STATE.cells[SELECTED_DAY]||{}).filter(isRealLesson).length;
+    left.appendChild(el("div","s", n ? `${n} ${n===1?"ora di lezione":"ore di lezione"}` : "Nessuna lezione in questo giorno"));
+  }else if(st.current && isRealLesson(st.current.cell)){
+    box.className = "now";
+    left.appendChild(el("div","k","In corso · ora " + (st.current.i+1)));
+    left.appendChild(el("div","v", st.current.cell.class + (st.current.cell.room && st.current.cell.room!=="—" ? " · " + st.current.cell.room : "")));
+    left.appendChild(el("div","s", `${st.current.cell.subject || ""} — termina alle ${st.current.slot.end}, fra ${st.current.left} min`));
+  }else if(st.next){
+    box.className = "now";
+    left.appendChild(el("div","k","Prossima lezione"));
+    left.appendChild(el("div","v", st.next.cell.class + " · " + st.next.slot.start));
+    left.appendChild(el("div","s", `${st.next.cell.room && st.next.cell.room!=="—" ? st.next.cell.room + " — " : ""}fra ${st.next.inMin} min`));
+  }else{
+    box.className = "now idle";
+    left.appendChild(el("div","k","Giornata conclusa"));
+    left.appendChild(el("div","v","Nessun'altra ora oggi"));
+    left.appendChild(el("div","s","Buona serata."));
+  }
+  box.appendChild(left);
+  box.appendChild(clock);
+}
+
+function renderDay(){
+  renderNow();
+  const tape = $("tape");
+  tape.innerHTML = "";
+  const dayKey = SELECTED_DAY;
+  const slots = slotsOf(dayKey);
+  const st = dayStatus(dayKey);
+  const showFree = SHOW_FREE || (STATE.meta.showEmptyDays||[]).includes(dayKey);
+  $("btnToggleFree").textContent = SHOW_FREE ? "Nascondi ore libere" : "Mostra ore libere";
+
+  // Sono visibili: le lezioni vere, le celle di sola annotazione (aula o nota
+  // senza classe: promemoria scritti a mano) e, su richiesta, le ore libere.
+  const visible = [];
+  for(let i=0;i<slots.length;i++){
+    const c = cellAt(dayKey, i);
+    const annotation = c && !isRealLesson(c) && (c.notes || (c.room && c.room !== "—"));
+    if(isRealLesson(c) || annotation || showFree) visible.push(i);
+  }
+  if(visible.length === 0){
+    const e = el("div","empty-state");
+    e.appendChild(el("b", null, slots.length ? "Nessuna lezione" : "Giorno non impostato"));
+    e.appendChild(el("div", null, slots.length
+      ? `${dayLabel(dayKey)} è libero. Tocca «Mostra ore libere» per vedere comunque la scaletta.`
+      : `Apri Modifica → Ore e orari per definire la scaletta di ${dayLabel(dayKey).toLowerCase()}.`));
+    tape.appendChild(e);
+    return;
+  }
+
+  for(const i of visible){
+    const slot = slots[i];
+    const c = cellAt(dayKey, i);
+    const real = isRealLesson(c);
+    const s = toMin(slot.start), e = toMin(slot.end);
+
+    const lane = el("div", "lane " + (real ? "busy" : "free"));
+    lane.style.setProperty("--dur", Math.max(30, e - s));
+    if(real) lane.style.setProperty("--c", c.color);
+    if(st.isToday && st.now >= e) lane.classList.add("past");
+    if(st.isToday && st.now >= s && st.now < e){
+      lane.classList.add("current");
+      const needle = el("div","needle");
+      needle.style.top = (((st.now - s) / Math.max(1, e - s)) * 100).toFixed(2) + "%";
+      lane.appendChild(needle);
+    }
+
+    const t = el("div","lane-time");
+    t.appendChild(el("div","a", slot.start));
+    t.appendChild(el("div","b", slot.end));
+    t.appendChild(el("div","n", (i+1) + "ª"));
+    lane.appendChild(t);
+
+    const body = el("div","lane-body");
+    if(real){
+      const h = el("div","lesson-h");
+      h.appendChild(el("div","lesson-cls", c.class || "—"));
+      if(c.room && c.room !== "—") h.appendChild(el("div","lesson-room", c.room));
+      body.appendChild(h);
+      if(c.subject && c.subject !== "—") body.appendChild(el("div","lesson-sub", c.subject));
+      if(c.notes) body.appendChild(el("div","lesson-note", c.notes));
+    }else if(c && (c.notes || (c.room && c.room !== "—"))){
+      lane.classList.remove("free"); lane.classList.add("memo");
+      if(c.room && c.room !== "—") body.appendChild(el("div","lesson-room", c.room));
+      if(c.notes) body.appendChild(el("div","lesson-note", c.notes));
+    }else{
+      body.appendChild(el("div", null, "libera"));
+    }
+    lane.appendChild(body);
+    tape.appendChild(lane);
+  }
+}
+
+/* ---------- 6.2 Planning settimanale ---------- */
+
+function buildWeekTable(table, editable){
+  table.innerHTML = "";
+  const today = dayKeyOf(new Date());
+  const thead = el("thead"), hr = el("tr");
+  const th0 = el("th","hour","Ora"); hr.appendChild(th0);
+  for(const d of DAYS){
+    const th = el("th", d.key === today ? "today" : "", d.label);
+    hr.appendChild(th);
+  }
+  thead.appendChild(hr); table.appendChild(thead);
+
+  const tbody = el("tbody");
+  const rows = maxSlots();
+  if(rows === 0){
+    const tr = el("tr"), td = el("td");
+    td.colSpan = 6;
+    td.appendChild(el("div","empty-state","Nessuna scaletta oraria definita."));
+    tr.appendChild(td); tbody.appendChild(tr); table.appendChild(tbody);
+    return;
+  }
+
+  for(let i=0;i<rows;i++){
+    const tr = el("tr");
+    const hcell = el("td","hour");
+    hcell.appendChild(el("b", null, (i+1) + "ª"));
+    tr.appendChild(hcell);
+
+    for(const d of DAYS){
+      const slot = slotsOf(d.key)[i] || null;
+      const c = cellAt(d.key, i);
+      const td = el("td", "tdcol" + (d.key === today ? " today" : ""));
+      const box = el("div","wcell" + (isRealLesson(c) ? " has" : ""));
+      if(c) box.style.setProperty("--c", c.color);
+
+      if(c){
+        box.appendChild(el("div","c", c.class || "—"));
+        const sub = c.abbr || autoAbbr(c.subject);
+        if(sub) box.appendChild(el("div","s", sub));
+        if(c.room && c.room !== "—") box.appendChild(el("div","r", c.room));
+      }
+      box.appendChild(el("div","t", slot ? slot.start + "–" + slot.end : ""));
+
+      if(editable){
+        box.addEventListener("click", ()=> openLesson(d.key, i));
+        box.tabIndex = 0;
+        box.addEventListener("keydown", ev=>{ if(ev.key === "Enter") openLesson(d.key, i); });
+      }
+      td.appendChild(box);
+      tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+  }
+  table.appendChild(tbody);
+}
+
+function renderWeek(){
+  buildWeekTable($("weekTable"), false);
+  const seen = new Map();
+  for(const d of DAYS){
+    for(const c of Object.values(STATE.cells[d.key]||{})){
+      if(isRealLesson(c) && !seen.has(c.class)) seen.set(c.class, c.color);
+    }
+  }
+  const lg = $("weekLegend"); lg.innerHTML = "";
+  for(const [cls, col] of seen){
+    const li = el("div","li");
+    const sw = el("span","sw"); sw.style.setProperty("--c", col);
+    li.appendChild(sw); li.appendChild(el("span", null, cls));
+    lg.appendChild(li);
+  }
+}
+
+/* ---------- 6.3 Editor ---------- */
+
+function renderEditor(){
+  buildWeekTable($("editTable"), true);
+  $("inpTeacher").value = STATE.meta.teacher || "";
+  $("inpSchool").value  = STATE.meta.school  || "";
+
+  const box = $("emptyDays"); box.innerHTML = "";
+  for(const d of DAYS){
+    const on = (STATE.meta.showEmptyDays||[]).includes(d.key);
+    const b = el("button","btn sm" + (on ? " pri" : ""), d.short);
+    b.addEventListener("click", ()=>{
+      const set = new Set(STATE.meta.showEmptyDays||[]);
+      set.has(d.key) ? set.delete(d.key) : set.add(d.key);
+      STATE.meta.showEmptyDays = [...set];
+      renderEditor();
+    });
+    box.appendChild(b);
+  }
+
+  $("cfgOwner").value  = CFG.github.owner;
+  $("cfgRepo").value   = CFG.github.repo;
+  $("cfgBranch").value = CFG.github.branch;
+  $("cfgPath").value   = CFG.github.path;
+  $("btnPasteInfo").textContent = CLIPBOARD ? `Negli appunti: ${CLIPBOARD.class||"—"}` : "Appunti vuoti";
+  $("btnPasteInfo").disabled = !CLIPBOARD;
+}
+
+/* ==========================================================================
+   7. Modale lezione
+   ========================================================================== */
+
+let LCTX = { day:null, i:null };
+
+function openLesson(day, i){
+  LCTX = { day, i };
+  const c = cellAt(day, i) || { class:"", subject:"", abbr:"", room:"", notes:"", color:"#60a5fa" };
+  const slot = slotsOf(day)[i];
+  $("mLessonTitle").textContent = `${dayLabel(day)} · ${i+1}ª ora` + (slot ? ` · ${slot.start}–${slot.end}` : "");
+  $("fClass").value = c.class; $("fSubject").value = c.subject; $("fAbbr").value = c.abbr;
+  $("fRoom").value = c.room;  $("fNotes").value = c.notes;    $("fColor").value = c.color;
+  renderSwatches(c.color);
+  $("btnCellPaste").disabled = !CLIPBOARD;
+  openModal("mLesson");
+  setTimeout(()=>$("fClass").focus(), 60);
+}
+function renderSwatches(active){
+  const w = $("swatches"); w.innerHTML = "";
+  const used = new Set(PALETTE);
+  for(const d of DAYS) for(const c of Object.values(STATE.cells[d.key]||{})) used.add(c.color);
+  for(const col of used){
+    const b = el("button"); b.style.background = col; b.title = col;
+    b.setAttribute("aria-pressed", col.toLowerCase() === String(active).toLowerCase());
+    b.addEventListener("click", ()=>{ $("fColor").value = col; renderSwatches(col); });
+    w.appendChild(b);
+  }
+}
+function applyLesson(){
+  const { day, i } = LCTX;
+  const c = cleanCell({
+    class:$("fClass").value, subject:$("fSubject").value, abbr:$("fAbbr").value,
+    room:$("fRoom").value, notes:$("fNotes").value, color:$("fColor").value.trim() || "#60a5fa"
+  });
+  if(!c.class && !c.subject){ delete STATE.cells[day][i]; }
+  else{ STATE.cells[day][i] = c; }
+  closeModal("mLesson");
+  renderAll();
+  touchSession();
+}
+
+/* ==========================================================================
+   8. Modale orari
+   ========================================================================== */
+
+let TDRAFT = null;
+
+function openTimes(){
+  TDRAFT = clone(STATE.timeSlots);
+  const sel = $("tDay"); sel.innerHTML = "";
+  for(const d of DAYS){ const o = el("option", null, d.label); o.value = d.key; sel.appendChild(o); }
+  sel.value = SELECTED_DAY;
+  renderTimes(sel.value);
+  openModal("mTimes");
+}
+function renderTimes(day){
+  const t = $("timesTbl"); t.innerHTML = "";
+  const head = el("tr");
+  head.appendChild(el("th", null, "Ora"));
+  head.appendChild(el("th", null, "Inizio"));
+  head.appendChild(el("th", null, "Fine"));
+  head.appendChild(el("th", null, "Min"));
+  t.appendChild(head);
+
+  (TDRAFT[day] || []).forEach((s, i)=>{
+    const tr = el("tr");
+    tr.appendChild(el("td", null, (i+1) + "ª"));
+    for(const f of ["start","end"]){
+      const td = el("td");
+      const inp = document.createElement("input");
+      inp.type = "time"; inp.value = s[f];
+      inp.addEventListener("change", ()=>{ TDRAFT[day][i][f] = inp.value; renderTimes(day); });
+      td.appendChild(inp); tr.appendChild(td);
+    }
+    const dur = toMin(s.end) - toMin(s.start);
+    tr.appendChild(el("td", null, dur > 0 ? String(dur) : "!"));
+    t.appendChild(tr);
+  });
+}
+function applyTimes(){
+  STATE.timeSlots = TDRAFT;
+  closeModal("mTimes");
+  renderAll();
+  touchSession();
+}
+
+/* ==========================================================================
+   9. Accesso
+   ========================================================================== */
+
+function openAuth(){
+  const vault = getVault();
+  // In modalità PHP la password è verificata dal server: nessun token da cifrare.
+  const needSetup = CFG.backend === "php" ? false : (!vault || !CFG.github.owner);
+  $("authSetup").hidden = !needSetup;
+  $("authUnlock").hidden = needSetup;
+  $("authTitle").textContent = needSetup ? "Configura l'accesso" : "Sblocca la modifica";
+  $("btnAuthGo").textContent = needSetup ? "Salva e sblocca" : "Sblocca";
+  $("btnAuthSwitch").hidden = needSetup;
+  msgInto($("authMsg"), "", "");
+  if(needSetup && !CFG.github.owner){
+    msgInto($("authMsg"), "info", "Imposta prima utente, repository, ramo e percorso del file nella scheda Modifica → Salvataggio, oppure compilali qui sotto dopo lo sblocco.");
+  }
+  openModal("mAuth");
+  setTimeout(()=>{ (needSetup ? $("setToken") : $("authPw")).focus(); }, 60);
+}
+
+async function doAuth(){
+  const setup = !$("authSetup").hidden;
+  const btn = $("btnAuthGo");
+  btn.disabled = true;
+  try{
+    if(setup){
+      const tok = $("setToken").value.trim();
+      const pw  = $("setPw").value;
+      if(!tok) throw new Error("Incolla il token GitHub.");
+      if(pw.length < 8) throw new Error("La password deve avere almeno 8 caratteri.");
+      if(pw !== $("setPw2").value) throw new Error("Le due password non coincidono.");
+      setVault(await sealToken(pw, tok));
+      SESSION.token = tok;
+      $("setToken").value = $("setPw").value = $("setPw2").value = "";
+    }else if(CFG.backend === "php"){
+      const pw = $("authPw").value;
+      if(!pw) throw new Error("Inserisci la password.");
+      const r = await fetch(CFG.phpApi + "?action=check", { headers:{ "X-Orario-Token": pw } });
+      const j = await r.json().catch(()=>({}));
+      if(!r.ok || !j.ok) throw new Error(j.error || "Password errata.");
+      SESSION.token = pw;
+      $("authPw").value = "";
+    }else{
+      const pw = $("authPw").value;
+      if(!pw) throw new Error("Inserisci la password.");
+      try{ SESSION.token = await openToken(pw, getVault()); }
+      catch{ throw new Error("Password errata."); }
+      $("authPw").value = "";
+    }
+    unlockedUI();
+    closeModal("mAuth");
+    renderEditor();
+    showView("edit");
+    toast("Modifica sbloccata", "ok");
+  }catch(e){
+    msgInto($("authMsg"), "err", e.message);
+  }finally{
+    btn.disabled = false;
+  }
+}
+
+async function testAccess(){
+  const box = $("syncMsg");
+  if(CFG.backend !== "github"){ msgInto(box,"info","Verifica disponibile solo in modalità GitHub."); return; }
+  if(!SESSION.token){ msgInto(box,"err","Sblocca prima la modifica."); return; }
+  msgInto(box,"info","Verifica in corso…");
+  const g = CFG.github;
+  try{
+    const r = await fetch(`https://api.github.com/repos/${g.owner}/${g.repo}`, {
+      headers:{ Authorization:"Bearer "+SESSION.token, Accept:"application/vnd.github+json" }
+    });
+    if(!r.ok) throw new Error(await ghError(r));
+    const j = await r.json();
+    if(!j.permissions || !j.permissions.push) throw new Error("Il token legge il repository ma non può scrivere: aggiungi «Contents: Read and write».");
+    const f = await fetch(`https://api.github.com/repos/${g.owner}/${g.repo}/contents/${g.path}?ref=${encodeURIComponent(g.branch)}`, {
+      headers:{ Authorization:"Bearer "+SESSION.token, Accept:"application/vnd.github+json" }
+    });
+    if(f.status === 404) msgInto(box,"info",`Accesso in scrittura verificato. Il file <code>${g.path}</code> non esiste ancora sul ramo <code>${g.branch}</code>: verrà creato al primo salvataggio.`);
+    else if(!f.ok) throw new Error(await ghError(f));
+    else msgInto(box,"ok","Tutto in ordine: lettura e scrittura verificate.");
+  }catch(e){
+    msgInto(box,"err", e.message);
+  }
+}
+
+/* ==========================================================================
+   10. Modali, import/export
+   ========================================================================== */
+
+function openModal(id){ $(id).hidden = false; }
+function closeModal(id){ $(id).hidden = true; }
+document.addEventListener("click", e=>{
+  const id = e.target.getAttribute && e.target.getAttribute("data-close");
+  if(id) closeModal(id);
+  if(e.target.classList && e.target.classList.contains("back")) closeModal(e.target.id);
+});
+document.addEventListener("keydown", e=>{
+  if(e.key === "Escape") document.querySelectorAll(".back:not([hidden])").forEach(b=>b.hidden = true);
+  if(e.key === "Enter" && !$("mAuth").hidden) doAuth();
+});
+
+function exportJSON(){
+  const blob = new Blob([JSON.stringify(STATE, null, 2)], { type:"application/json" });
+  const a = el("a"); a.href = URL.createObjectURL(blob);
+  a.download = "orario_schedule.json"; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+}
+function importJSON(){
+  const fi = $("fileInput");
+  fi.value = "";
+  fi.onchange = ()=>{
+    const f = fi.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = ()=>{
+      try{
+        STATE = normalize(JSON.parse(r.result));
+        renderAll();
+        toast("Orario importato — ricordati di salvarlo", "ok");
+      }catch{ toast("File non valido", "err"); }
+    };
+    r.readAsText(f);
+  };
+  fi.click();
+}
+
+/* ==========================================================================
+   11. Render globale e avvio
+   ========================================================================== */
+
+function renderAll(){
+  renderHeader();
+  renderDayBar();
+  renderDay();
+  renderWeek();
+  if(!$("viewEdit").hidden || isUnlocked()) renderEditor();
+}
+
+function wire(){
+  $("tabDay").addEventListener("click", ()=>{ showView("day"); renderDay(); });
+  $("tabWeek").addEventListener("click", ()=>{ showView("week"); renderWeek(); });
+  $("tabEdit").addEventListener("click", ()=>{
+    if(!isUnlocked()) return openAuth();
+    renderEditor(); showView("edit");
+  });
+
+  $("btnToggleFree").addEventListener("click", ()=>{
+    SHOW_FREE = !SHOW_FREE;
+    localStorage.setItem(LS.free, SHOW_FREE ? "1" : "0");
+    renderDay();
+  });
+  $("btnPrint").addEventListener("click", ()=>window.print());
+  $("btnTheme").addEventListener("click", ()=>{
+    applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
+  });
+
+  $("btnCellApply").addEventListener("click", applyLesson);
+  $("btnCellClear").addEventListener("click", ()=>{
+    delete STATE.cells[LCTX.day][LCTX.i];
+    closeModal("mLesson"); renderAll(); touchSession();
+  });
+  $("btnCellCopy").addEventListener("click", ()=>{
+    CLIPBOARD = cleanCell({
+      class:$("fClass").value, subject:$("fSubject").value, abbr:$("fAbbr").value,
+      room:$("fRoom").value, notes:$("fNotes").value, color:$("fColor").value
+    });
+    $("btnCellPaste").disabled = false;
+    toast("Copiata: " + (CLIPBOARD.class || "cella"));
+  });
+  $("btnCellPaste").addEventListener("click", ()=>{
+    if(!CLIPBOARD) return;
+    $("fClass").value = CLIPBOARD.class; $("fSubject").value = CLIPBOARD.subject;
+    $("fAbbr").value = CLIPBOARD.abbr;   $("fRoom").value = CLIPBOARD.room;
+    $("fNotes").value = CLIPBOARD.notes; $("fColor").value = CLIPBOARD.color;
+    renderSwatches(CLIPBOARD.color);
+  });
+
+  $("btnTimes").addEventListener("click", openTimes);
+  $("tDay").addEventListener("change", e=>renderTimes(e.target.value));
+  $("btnTimesApply").addEventListener("click", applyTimes);
+  $("btnAddSlot").addEventListener("click", ()=>{
+    const day = $("tDay").value;
+    const arr = TDRAFT[day] || (TDRAFT[day] = []);
+    const last = arr[arr.length-1];
+    const start = last ? last.end : "08:15";
+    arr.push({ start, end: toHHMM(toMin(start) + 50) });
+    renderTimes(day);
+  });
+  $("btnDelSlot").addEventListener("click", ()=>{
+    const day = $("tDay").value;
+    (TDRAFT[day] || []).pop();
+    renderTimes(day);
+  });
+  $("btnGen").addEventListener("click", ()=>{
+    const day = $("tDay").value;
+    let t = toMin($("genStart").value || "08:15");
+    const f = Number($("genFirst").value) || 60, n = Number($("genNext").value) || 50, N = Number($("genN").value) || 6;
+    const out = [];
+    for(let i=0;i<N;i++){ const dur = i===0 ? f : n; out.push({ start:toHHMM(t), end:toHHMM(t+dur) }); t += dur; }
+    TDRAFT[day] = out;
+    renderTimes(day);
+  });
+
+  $("btnAuthGo").addEventListener("click", doAuth);
+  $("btnAuthSwitch").addEventListener("click", ()=>{
+    $("authSetup").hidden = false; $("authUnlock").hidden = true;
+    $("authTitle").textContent = "Configura l'accesso";
+    $("btnAuthGo").textContent = "Salva e sblocca";
+    msgInto($("authMsg"), "info", "Reimpostando token e password sostituirai quelli salvati su questo dispositivo.");
+  });
+  $("btnLock").addEventListener("click", ()=>lock("Modifica bloccata."));
+
+  $("btnSave").addEventListener("click", async ()=>{
+    STATE.meta.teacher = $("inpTeacher").value.trim();
+    STATE.meta.school  = $("inpSchool").value.trim();
+    const b = $("btnSave"); b.disabled = true; b.textContent = "Salvataggio…";
+    try{
+      const r = await saveData(STATE);
+      msgInto($("syncMsg"), "ok", "Orario salvato su " + r.where + ".");
+      toast("Orario salvato", "ok");
+      DATA_ORIGIN = { origin:"remoto", at:null };
+      renderHeader();
+    }catch(e){
+      msgInto($("syncMsg"), "err", e.message);
+      toast("Salvataggio non riuscito", "err");
+    }finally{
+      b.disabled = false; b.textContent = "Salva l'orario";
+      touchSession();
+    }
+  });
+  $("btnReload").addEventListener("click", async ()=>{
+    if(!confirm("Ricarico dal server: le modifiche non salvate andranno perse. Procedo?")) return;
+    const r = await loadData(); STATE = r.data; DATA_ORIGIN = r; renderAll();
+    toast("Dati ricaricati");
+  });
+  $("btnExport").addEventListener("click", exportJSON);
+  $("btnImport").addEventListener("click", importJSON);
+
+  $("btnCfgSave").addEventListener("click", ()=>{
+    CFG.github.owner  = $("cfgOwner").value.trim();
+    CFG.github.repo   = $("cfgRepo").value.trim();
+    CFG.github.branch = $("cfgBranch").value.trim() || "main";
+    CFG.github.path   = $("cfgPath").value.trim() || "orario_schedule.json";
+    saveConfig();
+    msgInto($("syncMsg"), "ok", "Impostazioni salvate su questo dispositivo.");
+  });
+  $("btnCfgTest").addEventListener("click", testAccess);
+  $("btnCfgWipe").addEventListener("click", ()=>{
+    if(!confirm("Elimino token cifrato e impostazioni da questo dispositivo. L'orario pubblicato non viene toccato. Procedo?")) return;
+    localStorage.removeItem(LS.vault);
+    lock();
+    msgInto($("syncMsg"), "info", "Credenziali eliminate da questo dispositivo.");
+  });
+
+  ["click","keydown"].forEach(ev=>document.addEventListener(ev, touchSession, { passive:true }));
+
+  // Orologio e stato "in corso": aggiornamento ogni 30 s.
+  setInterval(()=>{ if(!$("viewDay").hidden && !document.hidden) renderDay(); }, 30000);
+
+  // Al ritorno sull'app: ricarico se i dati sono vecchi di oltre 10 minuti.
+  let lastLoad = Date.now();
+  document.addEventListener("visibilitychange", async ()=>{
+    if(document.hidden) return;
+    renderDay();
+    if(Date.now() - lastLoad > 600000){
+      const r = await loadData();
+      if(r.origin === "remoto"){ STATE = r.data; DATA_ORIGIN = r; lastLoad = Date.now(); renderAll(); }
+    }
+  });
+}
+
+async function init(){
+  initTheme();
+  wire();
+  const r = await loadData();
+  STATE = r.data; DATA_ORIGIN = r;
+  const today = dayKeyOf(new Date());
+  SELECTED_DAY = today || "LUN";
+  showView("day");
+  renderAll();
+  if(r.origin === "cache"){
+    toast("Sei offline: mostro l'ultima copia scaricata");
+  }else if(r.origin === "vuoto"){
+    toast("Nessun orario trovato: sblocca la modifica per crearne uno");
+  }
+  if("serviceWorker" in navigator && location.protocol === "https:"){
+    navigator.serviceWorker.register("sw.js").catch(()=>{});
+  }
+}
+init();
+</script>
+</body>
+</html>
