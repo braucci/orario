@@ -627,6 +627,8 @@ html[data-theme="dark"] .back{ background:rgba(3,6,12,.7); }
    1. Configurazione
    ========================================================================== */
 
+const APP_VERSION = "2026.08.29-4";   // visibile nella vista Giorno, in basso a destra
+
 const DEFAULT_CONFIG = {
   backend: "github",              // "github" | "php" | "local"
   dataUrl: "orario_schedule.json",// lettura pubblica, percorso relativo
@@ -964,7 +966,7 @@ function renderHeader(){
   const upd = STATE.meta.updatedISO ? new Date(STATE.meta.updatedISO) : null;
   $("printMeta").textContent = [STATE.meta.teacher, STATE.meta.school].filter(Boolean).join(" — ");
   const origine = { remoto:"in linea", cache:"copia offline", locale:"archivio locale", vuoto:"nessun dato" }[DATA_ORIGIN.origin];
-  $("stampData").textContent = (upd ? "Aggiornato " + upd.toLocaleDateString("it-IT",{day:"2-digit",month:"short",year:"numeric"}) : "Mai aggiornato") + " · " + origine;
+  $("stampData").textContent = (upd ? "Aggiornato " + upd.toLocaleDateString("it-IT",{day:"2-digit",month:"short",year:"numeric"}) : "Mai aggiornato") + " · " + origine + " · v" + APP_VERSION;
 }
 
 /* ---------- 6.1 Vista giorno ---------- */
@@ -1857,7 +1859,26 @@ async function init(){
     toast("Nessun orario trovato: sblocca la modifica per crearne uno");
   }
   if("serviceWorker" in navigator && location.protocol === "https:"){
-    navigator.serviceWorker.register("sw.js").catch(()=>{});
+    // Se il worker in cache è più vecchio del file pubblicato, lo si sostituisce
+    // e si ricarica una sola volta: senza questo, una versione vecchia dell'app
+    // resterebbe servita dalla cache a tempo indeterminato.
+    try{
+      const reg = await navigator.serviceWorker.register("sw.js", { updateViaCache:"none" });
+      reg.update();
+      let reloaded = false;
+      navigator.serviceWorker.addEventListener("controllerchange", ()=>{
+        if(reloaded) return;
+        reloaded = true;
+        location.reload();
+      });
+      if(reg.waiting) reg.waiting.postMessage("skipWaiting");
+      reg.addEventListener("updatefound", ()=>{
+        const sw = reg.installing;
+        if(sw) sw.addEventListener("statechange", ()=>{
+          if(sw.state === "installed" && navigator.serviceWorker.controller) sw.postMessage("skipWaiting");
+        });
+      });
+    }catch(_){}
   }
 }
 init();
