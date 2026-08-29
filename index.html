@@ -338,13 +338,15 @@ html[data-theme="dark"] .back{ background:rgba(3,6,12,.7); }
 
 /* ---------- Stampa: planning A4 orizzontale ---------- */
 @media print{
-  /* Il planner deve stare in UNA sola A4 orizzontale, centrato nella pagina.
-     Geometria utile: 297-2x11 = 275 mm di larghezza, 210-2x10 = 190 mm di altezza.
-     Di questi, circa 14 mm vanno all'intestazione: alla tabella ne restano 172. */
-  @page{ size:A4 landscape; margin:10mm 11mm; }
+  /* Il planner sta in UNA sola A4 orizzontale, centrato nei due sensi.
+     Avvertenza: Safari NON applica la regola size qui sotto e usa
+     l'orientamento scelto nella finestra di stampa; Chrome invece la rispetta.
+     Per questo la centratura non dipende dall'orientamento: il blocco si
+     centra in qualunque area utile gli venga concessa. */
+  @page{ size:297mm 210mm; margin:9mm; }
 
   html, body{
-    background:#fff; color:#000;
+    background:#fff; color:#000; width:auto; height:auto;
     -webkit-print-color-adjust:exact; print-color-adjust:exact;
     font-size:10pt;
   }
@@ -354,39 +356,41 @@ html[data-theme="dark"] .back{ background:rgba(3,6,12,.7); }
   .panel h2{ display:none; }
   .pb{ padding:0; }
 
-  /* Il blocco stampato occupa l'intera area utile e vi si centra. */
+  /* Centratura: contenitore alto quanto la pagina, contenuto di altezza
+     naturale, spazio residuo ripartito sopra e sotto. */
   #viewWeek{
-    display:flex; flex-direction:column; justify-content:center;
-    min-height:190mm; page-break-inside:avoid;
+    display:flex; flex-direction:column; justify-content:center; align-items:center;
+    min-height:96vh; page-break-inside:avoid; break-inside:avoid;
   }
-  .print-head{ display:block !important; text-align:center; margin:0 0 5mm; }
+  .print-head{ display:block !important; width:100%; text-align:center; margin:0 0 6mm; }
   .print-head h1{ font-size:15pt; font-weight:700; letter-spacing:.02em; }
   .print-head p{ font-size:9pt; color:#333; }
 
-  .weekwrap{ border:0; overflow:visible; background:none; }
+  .weekwrap{ border:0; overflow:visible; background:none; width:100%; }
 
-  /* table-layout:fixed impedisce alle note lunghe di dilatare una colonna;
-     l'altezza dichiarata fa ripartire le righe in parti uguali sul foglio. */
+  /* table-layout:fixed impedisce a una nota lunga di dilatare la colonna.
+     Altezza automatica: la tabella non viene stirata, viene centrata. */
   table.week{
-    min-width:0; width:100%; height:168mm; table-layout:fixed;
-    border:.5pt solid #444;
+    min-width:0; width:100%; height:auto; table-layout:fixed;
+    border:.5pt solid #444; page-break-inside:avoid;
   }
+  table.week tr{ page-break-inside:avoid; }
   table.week th, table.week td{ border:.4pt solid #888 !important; vertical-align:top; }
   table.week thead th{
     position:static; background:#e8e8e8 !important; color:#000 !important;
     font-size:8pt; letter-spacing:.08em; padding:1.6mm 1mm; box-shadow:none !important;
-    text-align:center; height:auto;
+    text-align:center;
   }
   table.week td.hour, table.week thead th.hour{
     position:static; background:#f0f0f0 !important; color:#000 !important;
-    width:15mm; min-width:0; padding:1.5mm .5mm; text-align:center;
+    width:14mm; min-width:0; padding:1.5mm .5mm; text-align:center;
   }
   table.week td.hour{ font-size:6.5pt; }
   table.week td.hour b{ font-size:9pt; }
   td.tdcol.today{ background:none !important; }
 
   .wcell{
-    min-height:0; height:100%; padding:1.6mm 1.8mm; gap:.6mm;
+    min-height:15mm; height:100%; padding:1.6mm 1.8mm; gap:.6mm;
     background:none !important;
     border-left:2.2pt solid var(--c, #bbb) !important;
   }
