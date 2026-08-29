@@ -448,7 +448,8 @@ html[data-theme="dark"] .back{ background:rgba(3,6,12,.7); }
       <h2>Planning settimanale
         <span class="sp"></span>
         <div class="row noprint">
-          <button class="btn sm" id="btnPrint">Stampa / PDF</button>
+          <button class="btn sm pri" id="btnPdf">Scarica PDF</button>
+          <button class="btn sm" id="btnPrint">Stampa</button>
         </div>
       </h2>
       <div class="pb">
@@ -1422,6 +1423,267 @@ function importJSON(){
 }
 
 /* ==========================================================================
+   12. Generatore PDF (nessuna libreria esterna)
+
+   Un PDF è un contenitore di oggetti numerati più una tabella di riferimenti
+   incrociati (xref) che ne registra l'offset in byte dall'inizio del file.
+   Qui se ne producono sei: catalogo, albero delle pagine, pagina, flusso dei
+   contenuti e due font della dotazione standard (Helvetica e Helvetica-Bold),
+   che ogni lettore possiede e non vanno quindi incorporati.
+
+   Unità: il punto tipografico, 1 pt = 1/72 in. A4 orizzontale = 841,89 × 595,28.
+   L'origine sta in basso a sinistra, quindi le ordinate crescono verso l'alto.
+   ========================================================================== */
+
+const PDFGEN = (() => {
+
+  // Larghezze dei glifi in millesimi di em, dalle metriche Adobe delle Helvetica.
+  // Servono per centrare i testi e troncarli senza farli debordare dalla cella.
+  const W_REG = [278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,
+    556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,
+    1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,
+    667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,
+    333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,
+    556,556,333,500,278,556,500,722,500,500,500,334,260,334,584];
+  const W_BOLD = [278,333,474,556,556,889,722,238,333,333,389,584,278,333,278,278,
+    556,556,556,556,556,556,556,556,556,556,333,333,584,584,584,611,
+    975,722,722,722,722,667,611,778,722,278,556,722,611,833,722,778,
+    667,778,722,667,611,722,667,944,667,667,611,333,278,333,584,556,
+    333,556,611,556,611,556,333,611,611,278,278,556,278,889,611,611,
+    611,611,389,556,333,611,556,778,556,556,500,389,280,389,584];
+
+  // Il font usa la codifica WinAnsi: le lettere accentate italiane ci sono già,
+  // la punteggiatura tipografica va rimappata sui suoi codici CP1252.
+  const CP1252 = { 0x2013:0x96, 0x2014:0x97, 0x2018:0x91, 0x2019:0x92,
+                   0x201C:0x93, 0x201D:0x94, 0x2022:0x95, 0x2026:0x85, 0x20AC:0x80 };
+
+  function toWinAnsi(s){
+    let out = "";
+    for(const ch of String(s ?? "")){
+      const c = ch.codePointAt(0);
+      if(c === 10 || c === 13) out += " ";
+      else if(c < 256) out += ch;
+      else if(CP1252[c]) out += String.fromCharCode(CP1252[c]);
+      else out += "-";
+    }
+    return out;
+  }
+  function esc(s){ return s.replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)"); }
+
+  function textWidth(s, size, bold){
+    const T = bold ? W_BOLD : W_REG;
+    let w = 0;
+    for(let i=0;i<s.length;i++){
+      const c = s.charCodeAt(i);
+      w += (c >= 32 && c <= 126) ? T[c-32] : 556;
+    }
+    return w * size / 1000;
+  }
+  function fit(s, maxW, size, bold){
+    if(textWidth(s, size, bold) <= maxW) return s;
+    let out = s;
+    while(out.length > 1 && textWidth(out + ".", size, bold) > maxW) out = out.slice(0, -1);
+    return out.trimEnd() + ".";
+  }
+  function wrap(s, maxW, size, bold, maxLines){
+    const words = s.split(/\s+/).filter(Boolean);
+    const lines = [];
+    let cur = "";
+    for(const w of words){
+      const t = cur ? cur + " " + w : w;
+      if(textWidth(t, size, bold) <= maxW) cur = t;
+      else{
+        if(cur) lines.push(cur);
+        cur = w;
+        if(lines.length === maxLines - 1) break;
+      }
+    }
+    if(cur) lines.push(cur);
+    if(lines.length === maxLines){
+      const rest = words.slice(lines.join(" ").split(/\s+/).length).join(" ");
+      if(rest) lines[maxLines-1] = fit(lines[maxLines-1] + " " + rest, maxW, size, bold);
+    }
+    return lines.slice(0, maxLines).map(l => fit(l, maxW, size, bold));
+  }
+
+  function rgb(hex){
+    let h = String(hex || "#999999").replace("#","");
+    if(h.length === 3) h = h.split("").map(c=>c+c).join("");
+    const n = parseInt(h.slice(0,6), 16);
+    if(Number.isNaN(n)) return [.6,.6,.6];
+    return [((n>>16)&255)/255, ((n>>8)&255)/255, (n&255)/255];
+  }
+  const f = (n) => (Math.round(n*100)/100).toString();
+
+  /* --- primitive di disegno sul flusso dei contenuti --- */
+  class Canvas{
+    constructor(){ this.ops = []; }
+    rect(x,y,w,h,color){ const [r,g,b] = rgb(color);
+      this.ops.push(`${f(r)} ${f(g)} ${f(b)} rg ${f(x)} ${f(y)} ${f(w)} ${f(h)} re f`); }
+    line(x1,y1,x2,y2,width,color){ const [r,g,b] = rgb(color);
+      this.ops.push(`${f(width)} w ${f(r)} ${f(g)} ${f(b)} RG ${f(x1)} ${f(y1)} m ${f(x2)} ${f(y2)} l S`); }
+    text(s,x,y,size,{bold=false,color="#000000",align="left",maxW=null}={}){
+      let t = toWinAnsi(s);
+      if(!t.trim()) return;
+      if(maxW) t = fit(t, maxW, size, bold);
+      let px = x;
+      if(align === "center") px = x - textWidth(t, size, bold)/2;
+      if(align === "right")  px = x - textWidth(t, size, bold);
+      const [r,g,b] = rgb(color);
+      this.ops.push(`BT /${bold?"FB":"FR"} ${f(size)} Tf ${f(r)} ${f(g)} ${f(b)} rg ${f(px)} ${f(y)} Td (${esc(t)}) Tj ET`);
+    }
+    toString(){ return this.ops.join("\n"); }
+  }
+
+  /* --- assemblaggio del file --- */
+  function assemble(content, W, H){
+    const objs = [
+      "<< /Type /Catalog /Pages 2 0 R >>",
+      "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${f(W)} ${f(H)}] ` +
+        "/Resources << /Font << /FR 5 0 R /FB 6 0 R >> >> /Contents 4 0 R >>",
+      `<< /Length ${content.length} >>\nstream\n${content}\nendstream`,
+      "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>",
+      "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>"
+    ];
+    let out = "%PDF-1.4\n%\u00E2\u00E3\u00CF\u00D3\n";
+    const offsets = [];
+    objs.forEach((o, i) => {
+      offsets.push(out.length);
+      out += `${i+1} 0 obj\n${o}\nendobj\n`;
+    });
+    const xref = out.length;
+    out += `xref\n0 ${objs.length+1}\n0000000000 65535 f \n`;
+    for(const off of offsets) out += String(off).padStart(10,"0") + " 00000 n \n";
+    out += `trailer\n<< /Size ${objs.length+1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+
+    const bytes = new Uint8Array(out.length);
+    for(let i=0;i<out.length;i++) bytes[i] = out.charCodeAt(i) & 0xFF;
+    return bytes;
+  }
+
+  /* --- impaginazione del planning --- */
+  function build(state, days, opts){
+    const W = 841.89, H = 595.28, M = 28;          // A4 orizzontale, margini 28 pt ≈ 10 mm
+    const c = new Canvas();
+
+    const rows = Math.max(0, ...days.map(d => (state.timeSlots[d.key]||[]).length));
+    if(rows === 0) throw new Error("Nessuna scaletta oraria da stampare.");
+
+    // Intestazione
+    const yTitle = H - M - 12;
+    c.text("Orario settimanale", W/2, yTitle, 15, { bold:true, align:"center" });
+    const sub = [state.meta.teacher, state.meta.school].filter(Boolean).join("  —  ");
+    c.text(sub, W/2, yTitle - 15, 8.5, { align:"center", color:"#444444", maxW:W - 2*M });
+
+    // Piè di pagina
+    const upd = state.meta.updatedISO ? new Date(state.meta.updatedISO) : null;
+    c.text(upd ? "Aggiornato al " + upd.toLocaleDateString("it-IT",{day:"2-digit",month:"long",year:"numeric"}) : "",
+           W/2, M - 4, 7, { align:"center", color:"#777777" });
+
+    // Geometria della griglia: altezza naturale limitata allo spazio utile,
+    // spazio residuo ripartito in parti uguali sopra e sotto (centratura).
+    const topLimit = yTitle - 30, botLimit = M + 12;
+    const headH = 19;
+    const rowH  = Math.min(58, (topLimit - botLimit - headH) / rows);
+    const tableH = headH + rowH*rows;
+    const yTop = botLimit + (topLimit - botLimit - tableH)/2 + tableH;
+
+    const hourW = 36;
+    const dayW  = (W - 2*M - hourW) / days.length;
+    const xLeft = M;
+
+    // Fondini
+    c.rect(xLeft, yTop - headH, W - 2*M, headH, "#e6e9ee");
+    c.rect(xLeft, yTop - tableH, hourW, tableH - headH, "#f1f3f7");
+
+    // Intestazioni di colonna
+    days.forEach((d, j) => {
+      c.text(d.label.toUpperCase(), xLeft + hourW + dayW*j + dayW/2, yTop - 13, 8,
+             { bold:true, align:"center", color:"#222222", maxW:dayW - 6 });
+    });
+    c.text("ORA", xLeft + hourW/2, yTop - 13, 7.5, { bold:true, align:"center", color:"#222222" });
+
+    // Contenuto delle celle
+    for(let i=0;i<rows;i++){
+      const yCellTop = yTop - headH - rowH*i;
+
+      c.text((i+1) + "\u00AA", xLeft + hourW/2, yCellTop - 13, 9, { bold:true, align:"center", color:"#111111" });
+
+      days.forEach((d, j) => {
+        const cell = ((state.cells[d.key]||{})[i]) || null;
+        const slot = (state.timeSlots[d.key]||[])[i] || null;
+        const x = xLeft + hourW + dayW*j;
+        const innerW = dayW - 12;
+        if(!cell && !slot) return;
+
+        if(cell && (cell.class || cell.subject)){
+          c.rect(x + 1.5, yCellTop - rowH + 1.5, 2.6, rowH - 3, cell.color);
+        }
+        let y = yCellTop - 12;
+        if(cell && cell.class){
+          c.text(cell.class, x + 8, y, 9.5, { bold:true, maxW:innerW, color:"#111111" });
+          y -= 10.5;
+        }
+        if(cell){
+          const subj = cell.abbr || opts.abbr(cell.subject);
+          if(subj){
+            for(const ln of wrap(toWinAnsi(subj), innerW, 7.5, false, 2)){
+              c.text(ln, x + 8, y, 7.5, { color:"#333333" }); y -= 8.6;
+            }
+          }
+          if(cell.room && cell.room !== "—"){
+            for(const ln of wrap(toWinAnsi(cell.room), innerW, 7, false, 2)){
+              c.text(ln, x + 8, y, 7, { color:"#555555" }); y -= 8;
+            }
+          }
+        }
+        if(slot){
+          c.text(slot.start + "-" + slot.end, x + 8, yCellTop - rowH + 5, 6.5, { color:"#666666" });
+        }
+      });
+    }
+
+    // Reticolo, disegnato per ultimo così resta sopra i fondini
+    const G = "#8a93a3", yBot = yTop - tableH;
+    for(let i=0;i<=rows;i++){
+      const y = yTop - headH - rowH*i;
+      c.line(xLeft, y, W - M, y, .4, G);
+    }
+    c.line(xLeft, yTop, W - M, yTop, .7, "#444a55");
+    c.line(xLeft, yTop - headH, W - M, yTop - headH, .7, "#444a55");
+    c.line(xLeft, yBot, W - M, yBot, .7, "#444a55");
+    c.line(xLeft, yBot, xLeft, yTop, .7, "#444a55");
+    c.line(W - M, yBot, W - M, yTop, .7, "#444a55");
+    c.line(xLeft + hourW, yBot, xLeft + hourW, yTop, .55, "#444a55");
+    for(let j=1;j<=days.length;j++){
+      const x = xLeft + hourW + dayW*j;
+      c.line(x, yBot, x, yTop, .4, G);
+    }
+
+    return assemble(c.toString(), W, H);
+  }
+
+  return { build };
+})();
+
+function downloadPDF(){
+  try{
+    const bytes = PDFGEN.build(STATE, DAYS, { abbr: autoAbbr });
+    const blob = new Blob([bytes], { type:"application/pdf" });
+    const url = URL.createObjectURL(blob);
+    const name = "Orario_settimanale_" + new Date().toISOString().slice(0,10) + ".pdf";
+    const a = document.createElement("a");
+    a.href = url; a.download = name; a.rel = "noopener";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 4000);
+    toast("PDF scaricato", "ok");
+  }catch(e){
+    toast(e.message || "PDF non generato", "err");
+  }
+}
+
+/* ==========================================================================
    11. Render globale e avvio
    ========================================================================== */
 
@@ -1447,6 +1709,7 @@ function wire(){
     renderDay();
   });
   $("btnPrint").addEventListener("click", ()=>window.print());
+  $("btnPdf").addEventListener("click", downloadPDF);
 
   // La stampa riguarda sempre il planning: se l'ordine parte da un'altra
   // scheda (o dal menu del browser) passo alla settimana e poi ripristino.
