@@ -7,7 +7,7 @@
       "GIO",
       "MER"
     ],
-    "updatedISO": "2026-08-29T14:53:43.290Z"
+    "updatedISO": "2026-08-29T15:02:37.888Z"
   },
   "days": [
     "LUN",
@@ -147,7 +147,7 @@
         "subject": "Strutt. Costr. Sist. e Impianti + Lab",
         "abbr": "",
         "room": "Lab Costruzioni del Mezzo",
-        "notes": "Chiariello Antonio\nLab DPO",
+        "notes": "Lab DPO",
         "color": "#6d5efc"
       },
       "1": {
@@ -155,7 +155,7 @@
         "subject": "Strutt. Costr. Sist. e Impianti + Lab",
         "abbr": "",
         "room": "Lab Costruzioni del Mezzo",
-        "notes": "Chiariello Antonio\nLab DPO",
+        "notes": "Lab DPO",
         "color": "#6d5efc"
       },
       "2": {
@@ -163,7 +163,7 @@
         "subject": "Strutt. Costr. Sist. e Impianti — pot",
         "abbr": "",
         "room": "—",
-        "notes": "Mentella Alessia",
+        "notes": "",
         "color": "#0b7dbb"
       },
       "3": {
@@ -171,7 +171,7 @@
         "subject": "Strutt. Costr. Sist. e Impianti — pot",
         "abbr": "",
         "room": "—",
-        "notes": "Mentella Alessia",
+        "notes": "",
         "color": "#0b7dbb"
       },
       "4": {
