@@ -5,9 +5,11 @@
     "showEmptyDays": [
       "MAR",
       "GIO",
-      "MER"
+      "MER",
+      "LUN",
+      "VEN"
     ],
-    "updatedISO": "2026-08-29T15:07:11.075Z"
+    "updatedISO": "2026-09-09T17:16:14.429Z"
   },
   "days": [
     "LUN",
@@ -19,186 +21,174 @@
   "timeSlots": {
     "LUN": [
       {
-        "start": "08:15",
-        "end": "09:15"
+        "start": "08:00",
+        "end": "09:00"
       },
       {
-        "start": "09:15",
-        "end": "10:15"
+        "start": "09:00",
+        "end": "10:00"
       },
       {
-        "start": "10:15",
-        "end": "11:15"
+        "start": "10:00",
+        "end": "11:00"
       },
       {
-        "start": "11:15",
-        "end": "12:15"
+        "start": "11:00",
+        "end": "12:00"
       },
       {
-        "start": "12:15",
-        "end": "13:15"
+        "start": "12:00",
+        "end": "13:00"
       }
     ],
     "MAR": [
       {
-        "start": "08:15",
-        "end": "09:15"
+        "start": "08:00",
+        "end": "09:00"
       },
       {
-        "start": "09:15",
-        "end": "10:05"
+        "start": "09:00",
+        "end": "10:00"
       },
       {
-        "start": "10:05",
-        "end": "10:55"
+        "start": "10:00",
+        "end": "11:00"
       },
       {
-        "start": "10:55",
-        "end": "11:45"
+        "start": "11:00",
+        "end": "12:00"
       },
       {
-        "start": "11:45",
-        "end": "12:35"
-      },
-      {
-        "start": "12:35",
-        "end": "13:25"
-      },
-      {
-        "start": "13:25",
-        "end": "14:15"
+        "start": "12:00",
+        "end": "13:00"
       }
     ],
     "MER": [
       {
-        "start": "08:15",
-        "end": "09:15"
+        "start": "08:00",
+        "end": "09:00"
       },
       {
-        "start": "09:15",
-        "end": "10:05"
+        "start": "09:00",
+        "end": "10:00"
       },
       {
-        "start": "10:05",
-        "end": "10:55"
+        "start": "10:00",
+        "end": "11:00"
+      },
+      {
+        "start": "11:00",
+        "end": "12:00"
+      },
+      {
+        "start": "12:00",
+        "end": "13:00"
       }
     ],
     "GIO": [
       {
-        "start": "08:15",
-        "end": "09:15"
+        "start": "08:00",
+        "end": "09:00"
       },
       {
-        "start": "09:15",
-        "end": "10:05"
+        "start": "09:00",
+        "end": "10:00"
       },
       {
-        "start": "10:05",
-        "end": "10:55"
+        "start": "10:00",
+        "end": "11:00"
       },
       {
-        "start": "10:55",
-        "end": "11:45"
+        "start": "11:00",
+        "end": "12:00"
       },
       {
-        "start": "11:45",
-        "end": "12:35"
-      },
-      {
-        "start": "12:35",
-        "end": "13:25"
-      },
-      {
-        "start": "13:25",
-        "end": "14:15"
+        "start": "12:00",
+        "end": "13:00"
       }
     ],
     "VEN": [
       {
-        "start": "08:15",
-        "end": "09:15"
+        "start": "08:00",
+        "end": "09:00"
       },
       {
-        "start": "09:15",
-        "end": "10:15"
+        "start": "09:00",
+        "end": "10:00"
       },
       {
-        "start": "10:15",
-        "end": "11:15"
+        "start": "10:00",
+        "end": "11:00"
       },
       {
-        "start": "11:15",
-        "end": "12:15"
+        "start": "11:00",
+        "end": "12:00"
       },
       {
-        "start": "12:15",
-        "end": "13:15"
-      },
-      {
-        "start": "13:15",
-        "end": "14:15"
+        "start": "12:00",
+        "end": "13:00"
       }
     ]
   },
   "cells": {
     "LUN": {
-      "0": {
-        "class": "4ACA",
-        "subject": "Strutt. Costr. Sist. e Impianti + Lab",
-        "abbr": "",
-        "room": "Lab Costruzioni del Mezzo",
-        "notes": "Lab DPO",
-        "color": "#6d5efc"
-      },
-      "1": {
-        "class": "4ACA",
-        "subject": "Strutt. Costr. Sist. e Impianti + Lab",
-        "abbr": "",
-        "room": "Lab Costruzioni del Mezzo",
-        "notes": "Lab DPO",
-        "color": "#6d5efc"
-      },
       "2": {
-        "class": "3ACA",
-        "subject": "Strutt. Costr. Sist. e Impianti — pot",
-        "abbr": "",
-        "room": "—",
-        "notes": "",
+        "class": "4I ITC",
+        "subject": "Strutt. Costr. Sist. e Impianti",
+        "abbr": "SCSI",
+        "room": "Lab 43",
+        "notes": "Compresenza - Renz",
         "color": "#0b7dbb"
       },
       "3": {
-        "class": "3ACA",
-        "subject": "Strutt. Costr. Sist. e Impianti — pot",
-        "abbr": "",
-        "room": "—",
-        "notes": "",
+        "class": "4I ITC",
+        "subject": "Strutt. Costr. Sist. e Impianti",
+        "abbr": "SCSI",
+        "room": "Lab 43",
+        "notes": "Compresenza - Renz",
         "color": "#0b7dbb"
       },
       "4": {
-        "class": "DT",
-        "subject": "—",
-        "abbr": "",
-        "room": "—",
-        "notes": "",
-        "color": "#f3e048"
+        "class": "3I ITC",
+        "subject": "Strutt. Costr. Sist. e Impianti",
+        "abbr": "SCSI",
+        "room": "Lab 43",
+        "notes": "Compresenza - Renz",
+        "color": "#22d3ee"
       }
     },
     "MAR": {
-      "3": {
-        "class": "4ACA",
-        "subject": "Strutt. Costr. Sist. e Impianti",
-        "abbr": "",
-        "room": "Aula 2.11",
+      "0": {
+        "class": "5I ITC",
+        "subject": "Struttura Costruzione Sistemi e Impianti",
+        "abbr": "SCSI",
+        "room": "124",
         "notes": "",
-        "color": "#9aa6ff"
+        "color": "#00ff40"
       },
-      "4": {
-        "class": "4ACA",
-        "subject": "Strutt. Costr. Sist. e Impianti",
+      "1": {
+        "class": "D",
+        "subject": "",
         "abbr": "",
-        "room": "Aula 2.11",
+        "room": "",
+        "notes": "Disposizione",
+        "color": "#fb923c"
+      },
+      "2": {
+        "class": "D",
+        "subject": "",
+        "abbr": "",
+        "room": "",
+        "notes": "Disposizione",
+        "color": "#fb923c"
+      },
+      "3": {
+        "class": "3I ITC",
+        "subject": "Strutt. Costr. Sist. e Impianti",
+        "abbr": "SCSI",
+        "room": "128",
         "notes": "",
-        "color": "#9aa6ff"
+        "color": "#22d3ee"
       },
       "5": {
         "class": "3ACA",
@@ -219,112 +209,88 @@
     },
     "MER": {
       "0": {
-        "class": "2G",
-        "subject": "STA",
-        "abbr": "",
-        "room": "Lab Costruzioni del Mezzo",
-        "notes": "",
-        "color": "#00ff40"
+        "class": "4I ITC",
+        "subject": "Strutt. Costr. Sist. e Impianti",
+        "abbr": "SCSI",
+        "room": "Lab 43",
+        "notes": "Compresenza - Renz",
+        "color": "#0b7dbb"
       },
       "1": {
-        "class": "2G",
-        "subject": "STA",
-        "abbr": "",
-        "room": "Lab Costruzioni del Mezzo",
-        "notes": "",
-        "color": "#00ff40"
+        "class": "4I ITC",
+        "subject": "Strutt. Costr. Sist. e Impianti",
+        "abbr": "SCSI",
+        "room": "Lab 43",
+        "notes": "Compresenza - Renz",
+        "color": "#0b7dbb"
       },
       "2": {
-        "class": "DB 1/2",
-        "subject": "G2",
-        "abbr": "",
-        "room": "—",
-        "notes": "",
-        "color": "#f3e048"
+        "class": "4I ITC",
+        "subject": "Strutt. Costr. Sist. e Impianti",
+        "abbr": "SCSI",
+        "room": "Lab 43",
+        "notes": "Compresenza - Renz",
+        "color": "#0b7dbb"
       }
     },
     "GIO": {
+      "1": {
+        "class": "5I ITC",
+        "subject": "Struttura Costruzione Sistemi e Impianti",
+        "abbr": "SCSI",
+        "room": "LAB 43",
+        "notes": "Compresenza - Renz Michele",
+        "color": "#00ff40"
+      },
+      "2": {
+        "class": "5I ITC",
+        "subject": "Struttura Costruzione Sistemi e Impianti",
+        "abbr": "SCSI",
+        "room": "LAB 43",
+        "notes": "Compresenza - Renz Michele",
+        "color": "#00ff40"
+      },
       "3": {
-        "class": "4ACA",
-        "subject": "Logistica + Lab",
-        "abbr": "",
-        "room": "B05 — Lab Logistica",
-        "notes": "Lab Costruzioni del Mezzo (prendere i ragazzi in 2.11)",
-        "color": "#f59e0b"
-      },
-      "4": {
-        "class": "4ACA",
-        "subject": "Logistica + Lab",
-        "abbr": "",
-        "room": "B05 — Lab Logistica",
-        "notes": "Lab Costruzioni del Mezzo",
-        "color": "#f59e0b"
-      },
-      "5": {
-        "class": "3ACA",
-        "subject": "Logistica + Lab",
-        "abbr": "",
-        "room": "B05 — Lab Logistica",
-        "notes": "Lab Costruzioni del Mezzo (prendere i ragazzi in 1.8)",
-        "color": "#f59e0b"
-      },
-      "6": {
-        "class": "3ACA",
-        "subject": "Logistica + Lab",
-        "abbr": "",
-        "room": "B05 — Lab Logistica",
-        "notes": "Lab Costruzioni del Mezzo",
-        "color": "#f59e0b"
+        "class": "5I ITC",
+        "subject": "Struttura Costruzione Sistemi e Impianti",
+        "abbr": "SCSI",
+        "room": "LAB 43",
+        "notes": "Compresenza - Renz Michele",
+        "color": "#00ff40"
       }
     },
     "VEN": {
-      "0": {
-        "class": "2G",
-        "subject": "STA",
-        "abbr": "",
-        "room": "—",
-        "notes": "",
+      "1": {
+        "class": "5I ITC",
+        "subject": "Struttura Costruzione Sistemi e Impianti",
+        "abbr": "SCSI",
+        "room": "LAB 43",
+        "notes": "Compresenza - Renz Michele",
         "color": "#00ff40"
       },
-      "1": {
-        "class": "3ACA",
-        "subject": "Strutt. Costr. Sist. e Impianti + Lab + pot",
-        "abbr": "",
-        "room": "Lab Costruzioni del Mezzo",
-        "notes": "Chiariello Antonio\nMentella Alessia\nLab DPO",
-        "color": "#0b7dbb"
-      },
       "2": {
-        "class": "4ACA",
-        "subject": "Strutt. Costr. Sist. e Impianti + Lab",
-        "abbr": "",
-        "room": "Lab Costruzioni del Mezzo",
-        "notes": "Chiariello Antonio - prendere i ragazzi in 1.10",
-        "color": "#6d5efc"
+        "class": "5I ITC",
+        "subject": "Struttura Costruzione Sistemi e Impianti",
+        "abbr": "SCSI",
+        "room": "LAB 43",
+        "notes": "Compresenza - Renz Michele",
+        "color": "#00ff40"
       },
       "3": {
-        "class": "RF",
-        "subject": "Ricevimento",
-        "abbr": "",
-        "room": "—",
-        "notes": "",
-        "color": "#ff2d2d"
+        "class": "5I ITC",
+        "subject": "Struttura Costruzione Sistemi e Impianti",
+        "abbr": "SCSI",
+        "room": "LAB 43",
+        "notes": "Compresenza - Renz Michele",
+        "color": "#00ff40"
       },
       "4": {
-        "class": "5ACA",
-        "subject": "Strutt. Costr. Sist. e Impianti + Lab + pot",
-        "abbr": "",
-        "room": "Lab Costruzioni del Mezzo",
-        "notes": "Chiariello Antonio\nMentella Alessia",
-        "color": "#0b7dbb"
-      },
-      "5": {
-        "class": "====",
-        "subject": "",
-        "abbr": "",
-        "room": "Aula Professori",
-        "notes": "Aspetto Chiariello",
-        "color": "#60a5fa"
+        "class": "5I ITC",
+        "subject": "Struttura Costruzione Sistemi e Impianti",
+        "abbr": "SCSI",
+        "room": "124",
+        "notes": "Compresenza - Renz Michele",
+        "color": "#00ff40"
       }
     }
   }
