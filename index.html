@@ -470,6 +470,7 @@ html[data-theme="dark"] .back{ background:rgba(3,6,12,.7); }
         </div>
       </h2>
       <div class="pb">
+        <div id="orphanMsg"></div>
         <div class="weekwrap editing"><table class="week" id="editTable"></table></div>
       </div>
     </div>
@@ -509,6 +510,7 @@ html[data-theme="dark"] .back{ background:rgba(3,6,12,.7); }
         <div class="row">
           <button class="btn" id="btnCfgSave">Salva impostazioni</button>
           <button class="btn" id="btnCfgTest">Verifica accesso</button>
+          <button class="btn" id="btnCfgShow">Mostra token</button>
           <button class="btn bad" id="btnCfgWipe">Elimina credenziali da questo dispositivo</button>
         </div>
         <p class="note" style="margin-top:12px;">
@@ -627,7 +629,7 @@ html[data-theme="dark"] .back{ background:rgba(3,6,12,.7); }
    1. Configurazione
    ========================================================================== */
 
-const APP_VERSION = "2026.08.29-4";   // visibile nella vista Giorno, in basso a destra
+const APP_VERSION = "2026.08.29-6";   // visibile nella vista Giorno, in basso a destra
 
 const DEFAULT_CONFIG = {
   backend: "github",              // "github" | "php" | "local"
@@ -785,6 +787,31 @@ function isRealLesson(c){
   return cl.length > 0 || (c.subject||"").replace(/[—\-\s]/g,"").length > 0;
 }
 function slotsOf(day){ return (STATE.timeSlots||{})[day] || []; }
+
+/** Lezioni del giorno agganciate a una fascia oraria esistente.
+ *  Le celle di indice superiore all'ultima ora definita sono "orfane":
+ *  restano nel file ma non sono rappresentabili, quindi non si contano. */
+function lessonsOfDay(day){
+  const n = slotsOf(day).length;
+  let k = 0;
+  for(let i=0;i<n;i++) if(isRealLesson(cellAt(day, i))) k++;
+  return k;
+}
+
+/** Celle rimaste oltre l'ultima ora definita, tipicamente dopo aver
+ *  accorciato la scaletta di un giorno. Invisibili ovunque: vanno mostrate
+ *  nell'editor, altrimenti riaffiorerebbero al primo allungamento. */
+function orphanCells(){
+  const out = [];
+  for(const d of DAYS){
+    const n = slotsOf(d.key).length;
+    for(const k of Object.keys((STATE.cells||{})[d.key] || {})){
+      const i = Number(k);
+      if(i >= n) out.push({ day:d.key, i, cell:STATE.cells[d.key][k] });
+    }
+  }
+  return out;
+}
 function cellAt(day, i){ return ((STATE.cells||{})[day] || {})[i] || null; }
 function maxSlots(){ return Math.max(0, ...DAYS.map(d=>slotsOf(d.key).length)); }
 
@@ -975,7 +1002,7 @@ function renderDayBar(){
   const bar = $("dayBar"); bar.innerHTML = "";
   const today = dayKeyOf(new Date());
   for(const d of DAYS){
-    const n = Object.values(STATE.cells[d.key]||{}).filter(isRealLesson).length;
+    const n = lessonsOfDay(d.key);
     const b = el("button");
     b.setAttribute("aria-pressed", d.key === SELECTED_DAY);
     if(d.key === today) b.classList.add("today");
@@ -1016,7 +1043,7 @@ function renderNow(){
     box.className = "now idle";
     left.appendChild(el("div","k","Consultazione"));
     left.appendChild(el("div","v", dayLabel(SELECTED_DAY)));
-    const n = Object.values(STATE.cells[SELECTED_DAY]||{}).filter(isRealLesson).length;
+    const n = lessonsOfDay(SELECTED_DAY);
     left.appendChild(el("div","s", n ? `${n} ${n===1?"ora di lezione":"ore di lezione"}` : "Nessuna lezione in questo giorno"));
   }else if(st.current && isRealLesson(st.current.cell)){
     box.className = "now";
@@ -1187,6 +1214,7 @@ function renderWeek(){
 
 function renderEditor(){
   buildWeekTable($("editTable"), true);
+  renderOrphans();
   $("inpTeacher").value = STATE.meta.teacher || "";
   $("inpSchool").value  = STATE.meta.school  || "";
 
@@ -1209,6 +1237,27 @@ function renderEditor(){
   $("cfgPath").value   = CFG.github.path;
   $("btnPasteInfo").textContent = CLIPBOARD ? `Negli appunti: ${CLIPBOARD.class||"—"}` : "Appunti vuoti";
   $("btnPasteInfo").disabled = !CLIPBOARD;
+}
+
+function renderOrphans(){
+  const box = $("orphanMsg");
+  const list = orphanCells();
+  if(list.length === 0){ box.innerHTML = ""; return; }
+  const dettaglio = list
+    .map(o => `${dayLabel(o.day)} ${o.i+1}ª — ${o.cell.class || o.cell.subject || "cella vuota"}`)
+    .join("; ");
+  msgInto(box, "err",
+    `<b>${list.length} ${list.length===1 ? "cella oltre l'ultima ora definita" : "celle oltre l'ultima ora definita"}.</b> ` +
+    `Non compaiono in nessuna vista ma restano nel file e falsano i conteggi: ${dettaglio}. ` +
+    "Allunga la scaletta del giorno se ti servono, altrimenti rimuovile.");
+  const b = el("button", "btn sm bad", "Rimuovi le celle orfane");
+  b.style.marginTop = "8px";
+  b.addEventListener("click", ()=>{
+    for(const o of orphanCells()) delete STATE.cells[o.day][o.i];
+    renderAll();
+    toast("Celle orfane rimosse — ricordati di salvare", "ok");
+  });
+  box.querySelector(".msg").appendChild(b);
 }
 
 /* ==========================================================================
@@ -1820,6 +1869,20 @@ function wire(){
     msgInto($("syncMsg"), "ok", "Impostazioni salvate su questo dispositivo.");
   });
   $("btnCfgTest").addEventListener("click", testAccess);
+
+  // Recupero del token custodito su questo dispositivo. Richiede lo sblocco:
+  // in memoria il valore in chiaro esiste solo dopo che la password ha
+  // decifrato il forziere, e sparisce al blocco automatico.
+  $("btnCfgShow").addEventListener("click", async ()=>{
+    if(!SESSION.token){ msgInto($("syncMsg"), "err", "Sblocca prima la modifica."); return; }
+    const safe = SESSION.token.replace(/[&<>"]/g, ch => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" })[ch]);
+    let copied = "";
+    try{ await navigator.clipboard.writeText(SESSION.token); copied = " Copiato negli appunti."; }catch{}
+    msgInto($("syncMsg"), "info",
+      "Token attivo su questo dispositivo." + copied +
+      " Si nasconde da sé fra trenta secondi.<br><code style=\"word-break:break-all; display:block; margin-top:6px;\">" + safe + "</code>");
+    setTimeout(()=>{ msgInto($("syncMsg"), "", ""); }, 30000);
+  });
   $("btnCfgWipe").addEventListener("click", ()=>{
     if(!confirm("Elimino token cifrato e impostazioni da questo dispositivo. L'orario pubblicato non viene toccato. Procedo?")) return;
     localStorage.removeItem(LS.vault);
