@@ -9,7 +9,7 @@
       "LUN",
       "VEN"
     ],
-    "updatedISO": "2026-09-09T17:16:14.429Z"
+    "updatedISO": "2026-09-10T15:29:03.584Z"
   },
   "days": [
     "LUN",
@@ -189,22 +189,6 @@
         "room": "128",
         "notes": "",
         "color": "#22d3ee"
-      },
-      "5": {
-        "class": "3ACA",
-        "subject": "Logistica",
-        "abbr": "",
-        "room": "1.8",
-        "notes": "",
-        "color": "#f59e0b"
-      },
-      "6": {
-        "class": "4ACA",
-        "subject": "Logistica",
-        "abbr": "",
-        "room": "Aula 2.11",
-        "notes": "i ragazzi vanno presi dall'aula 1.10",
-        "color": "#f59e0b"
       }
     },
     "MER": {
