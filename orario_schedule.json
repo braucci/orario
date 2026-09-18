@@ -9,7 +9,7 @@
       "LUN",
       "VEN"
     ],
-    "updatedISO": "2026-09-10T15:30:28.318Z"
+    "updatedISO": "2026-09-18T14:55:35.759Z"
   },
   "days": [
     "LUN",
@@ -218,6 +218,14 @@
       }
     },
     "GIO": {
+      "0": {
+        "class": "D",
+        "subject": "",
+        "abbr": "",
+        "room": "",
+        "notes": "",
+        "color": "#fb923c"
+      },
       "1": {
         "class": "5I ITC",
         "subject": "Struttura Costruzione Sistemi e Impianti",
