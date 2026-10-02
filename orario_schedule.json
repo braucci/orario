@@ -9,7 +9,7 @@
       "LUN",
       "VEN"
     ],
-    "updatedISO": "2026-09-18T14:55:35.759Z"
+    "updatedISO": "2026-10-02T18:22:03.674Z"
   },
   "days": [
     "LUN",
@@ -39,6 +39,14 @@
       {
         "start": "12:00",
         "end": "13:00"
+      },
+      {
+        "start": "13:00",
+        "end": "14:00"
+      },
+      {
+        "start": "14:00",
+        "end": "15:00"
       }
     ],
     "MAR": [
@@ -61,6 +69,14 @@
       {
         "start": "12:00",
         "end": "13:00"
+      },
+      {
+        "start": "13:00",
+        "end": "14:00"
+      },
+      {
+        "start": "14:00",
+        "end": "15:00"
       }
     ],
     "MER": [
@@ -83,6 +99,14 @@
       {
         "start": "12:00",
         "end": "13:00"
+      },
+      {
+        "start": "13:00",
+        "end": "14:00"
+      },
+      {
+        "start": "14:00",
+        "end": "15:00"
       }
     ],
     "GIO": [
@@ -105,6 +129,14 @@
       {
         "start": "12:00",
         "end": "13:00"
+      },
+      {
+        "start": "13:00",
+        "end": "14:00"
+      },
+      {
+        "start": "14:00",
+        "end": "15:00"
       }
     ],
     "VEN": [
@@ -127,6 +159,14 @@
       {
         "start": "12:00",
         "end": "13:00"
+      },
+      {
+        "start": "13:00",
+        "end": "14:00"
+      },
+      {
+        "start": "14:00",
+        "end": "15:00"
       }
     ]
   },
@@ -155,6 +195,14 @@
         "room": "Lab 43",
         "notes": "Compresenza - Renz",
         "color": "#22d3ee"
+      },
+      "5": {
+        "class": "3I ITC",
+        "subject": "SCSI",
+        "abbr": "",
+        "room": "Lab 43",
+        "notes": "Michele Renz",
+        "color": "#22d3ee"
       }
     },
     "MAR": {
@@ -166,25 +214,9 @@
         "notes": "",
         "color": "#00ff40"
       },
-      "1": {
-        "class": "D",
-        "subject": "",
-        "abbr": "",
-        "room": "",
-        "notes": "Disposizione",
-        "color": "#fb923c"
-      },
       "2": {
-        "class": "D",
-        "subject": "",
-        "abbr": "",
-        "room": "",
-        "notes": "Disposizione",
-        "color": "#fb923c"
-      },
-      "3": {
         "class": "3I ITC",
-        "subject": "Strutt. Costr. Sist. e Impianti",
+        "subject": "SCSI",
         "abbr": "SCSI",
         "room": "128",
         "notes": "",
@@ -218,14 +250,6 @@
       }
     },
     "GIO": {
-      "0": {
-        "class": "D",
-        "subject": "",
-        "abbr": "",
-        "room": "",
-        "notes": "",
-        "color": "#fb923c"
-      },
       "1": {
         "class": "5I ITC",
         "subject": "Struttura Costruzione Sistemi e Impianti",
@@ -256,8 +280,8 @@
         "class": "5I ITC",
         "subject": "Struttura Costruzione Sistemi e Impianti",
         "abbr": "SCSI",
-        "room": "LAB 43",
-        "notes": "Compresenza - Renz Michele",
+        "room": "124",
+        "notes": "",
         "color": "#00ff40"
       },
       "2": {
@@ -280,9 +304,25 @@
         "class": "5I ITC",
         "subject": "Struttura Costruzione Sistemi e Impianti",
         "abbr": "SCSI",
-        "room": "124",
+        "room": "LAB 43",
         "notes": "Compresenza - Renz Michele",
         "color": "#00ff40"
+      },
+      "5": {
+        "class": "3I TC",
+        "subject": "SCSI",
+        "abbr": "",
+        "room": "Lab 43",
+        "notes": "Michele Renz",
+        "color": "#22d3ee"
+      },
+      "6": {
+        "class": "3I TC",
+        "subject": "SCSI",
+        "abbr": "SCSI",
+        "room": "Lab. 43",
+        "notes": "Compresenza con Michele Renz",
+        "color": "#22d3ee"
       }
     }
   }
