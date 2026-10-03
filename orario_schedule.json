@@ -9,7 +9,7 @@
       "LUN",
       "VEN"
     ],
-    "updatedISO": "2026-10-03T18:03:33.288Z"
+    "updatedISO": "2026-10-03T18:07:05.417Z"
   },
   "days": [
     "LUN",
@@ -173,7 +173,7 @@
   "cells": {
     "LUN": {
       "2": {
-        "class": "4I ITC",
+        "class": "4I CT",
         "subject": "Strutt. Costr. Sist. e Impianti",
         "abbr": "SCSI",
         "room": "Lab 43",
@@ -181,7 +181,7 @@
         "color": "#0b7dbb"
       },
       "3": {
-        "class": "4I ITC",
+        "class": "4I CT",
         "subject": "Strutt. Costr. Sist. e Impianti",
         "abbr": "SCSI",
         "room": "Lab 43",
@@ -189,7 +189,7 @@
         "color": "#0b7dbb"
       },
       "4": {
-        "class": "3I ITC",
+        "class": "3I CT",
         "subject": "Strutt. Costr. Sist. e Impianti",
         "abbr": "SCSI",
         "room": "Lab 43",
@@ -197,7 +197,7 @@
         "color": "#22d3ee"
       },
       "5": {
-        "class": "3I ITC",
+        "class": "3I CT",
         "subject": "SCSI",
         "abbr": "",
         "room": "Lab 43",
@@ -207,7 +207,7 @@
     },
     "MAR": {
       "0": {
-        "class": "5I ITC",
+        "class": "5I TC",
         "subject": "Struttura Costruzione Sistemi e Impianti",
         "abbr": "SCSI",
         "room": "124",
@@ -215,7 +215,7 @@
         "color": "#00ff40"
       },
       "2": {
-        "class": "3I ITC",
+        "class": "3I TC",
         "subject": "SCSI",
         "abbr": "SCSI",
         "room": "128",
@@ -225,7 +225,7 @@
     },
     "MER": {
       "0": {
-        "class": "4I ITC",
+        "class": "4I TC",
         "subject": "Strutt. Costr. Sist. e Impianti",
         "abbr": "SCSI",
         "room": "Lab 43",
@@ -233,7 +233,7 @@
         "color": "#0b7dbb"
       },
       "1": {
-        "class": "4I ITC",
+        "class": "4I TC",
         "subject": "Strutt. Costr. Sist. e Impianti",
         "abbr": "SCSI",
         "room": "Lab 43",
@@ -241,7 +241,7 @@
         "color": "#0b7dbb"
       },
       "2": {
-        "class": "4I ITC",
+        "class": "4I TC",
         "subject": "Strutt. Costr. Sist. e Impianti",
         "abbr": "SCSI",
         "room": "Lab 43",
@@ -251,7 +251,7 @@
     },
     "GIO": {
       "1": {
-        "class": "5I ITC",
+        "class": "5I TC",
         "subject": "Struttura Costruzione Sistemi e Impianti",
         "abbr": "SCSI",
         "room": "LAB 43",
@@ -259,7 +259,7 @@
         "color": "#00ff40"
       },
       "2": {
-        "class": "5I ITC",
+        "class": "5I TC",
         "subject": "Struttura Costruzione Sistemi e Impianti",
         "abbr": "SCSI",
         "room": "LAB 43",
@@ -267,7 +267,7 @@
         "color": "#00ff40"
       },
       "3": {
-        "class": "5I ITC",
+        "class": "5I TC",
         "subject": "Struttura Costruzione Sistemi e Impianti",
         "abbr": "SCSI",
         "room": "LAB 43",
@@ -277,7 +277,7 @@
     },
     "VEN": {
       "1": {
-        "class": "5I ITC",
+        "class": "5I TC",
         "subject": "Struttura Costruzione Sistemi e Impianti",
         "abbr": "SCSI",
         "room": "124",
@@ -285,7 +285,7 @@
         "color": "#00ff40"
       },
       "2": {
-        "class": "5I ITC",
+        "class": "5I TC",
         "subject": "Struttura Costruzione Sistemi e Impianti",
         "abbr": "SCSI",
         "room": "LAB 43",
@@ -293,7 +293,7 @@
         "color": "#00ff40"
       },
       "3": {
-        "class": "5I ITC",
+        "class": "5I TC",
         "subject": "Struttura Costruzione Sistemi e Impianti",
         "abbr": "SCSI",
         "room": "LAB 43",
@@ -301,7 +301,7 @@
         "color": "#00ff40"
       },
       "4": {
-        "class": "5I ITC",
+        "class": "5I TC",
         "subject": "Struttura Costruzione Sistemi e Impianti",
         "abbr": "SCSI",
         "room": "LAB 43",
@@ -309,7 +309,7 @@
         "color": "#00ff40"
       },
       "5": {
-        "class": "3  ITC",
+        "class": "3I TC",
         "subject": "SCSI",
         "abbr": "",
         "room": "Lab 43",
@@ -317,7 +317,7 @@
         "color": "#22d3ee"
       },
       "6": {
-        "class": "3 ITC",
+        "class": "3I TC",
         "subject": "SCSI",
         "abbr": "SCSI",
         "room": "Lab. 43",
